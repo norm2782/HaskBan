@@ -1,29 +1,13 @@
-module HaskBan where
+module HaskBan (mainAction) where
   
-  import SokoParser (parseSokoMap)
-  import qualified Data.Map as M
-
-  data CellType = Wall
-                | Box
-                | Path
-                | Target
-                deriving (Show, Eq, Ord)
-
-  data Surrounding = Left CellType
-                   | Right CellType
-                   | Up CellType
-                   | Down CellType
-                   deriving (Show, Eq, Ord)
+  import HaskBanTypes
+  import HaskBanParser (runHaskBanParser)
+  import HaskBanPrinter 
+  import Control.Monad (mapM_)
+  import qualified Data.ByteString as BS
   
-  type Point = (Int, Int)
-
-  type SokoMap = M.Map Point CellType
-
-  data SokobanState = SokobanState {
-    player :: Point,
-    boxes :: [Point],
-    targets :: [Point],
-    cellMap :: SokoMap
-  }
-
+  mainAction :: IO ()
+  mainAction = BS.readFile "input.in" >>= \contents ->
+               mapM_ (putStrLn . showCellMatrix) (runHaskBanParser contents)
+  
 
