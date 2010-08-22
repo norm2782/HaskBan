@@ -1,45 +1,24 @@
 {-# LANGUAGE NoMonomorphismRestriction, GeneralizedNewtypeDeriving #-}
-module HaskBan where
+module HaskBan (mainAction, jurrenMainAction) where
   
---  import SokoParser (parseSokoMap)
-  import qualified Data.Map as M
-  import Control.Monad.State as MS
-  import Control.Monad (liftM, mapM_)
   import UI.HSCurses.Curses
-
-  data CellType = Wall
-                | Box
-                | Path
-                | Target
-                deriving (Show, Eq, Ord)
-
-  data Surrounding = Left CellType
-                   | Right CellType
-                   | Up CellType
-                   | Down CellType
-                   deriving (Show, Eq, Ord)
+  import HaskBanTypes
+  import HaskBanParser (runHaskBanParser)
+  import HaskBanPrinter 
+  import Control.Monad (mapM_)
+  import qualified Data.ByteString as BS
   
-  type Point = (Int, Int)
+  mainAction :: IO ()
+  mainAction = BS.readFile "input.in" >>= \contents ->
+               mapM_ (putStrLn . showCellMatrix) (runHaskBanParser contents)
 
-  type SokoMap = M.Map Point CellType
-
-  data SokobanStateInfo = SokobanStateInfo {
-    player  :: Point,
-    boxes   :: [Point],
-    targets :: [Point],
-    cellMap :: SokoMap
-  } deriving (Show)
-
-  newtype SokobanState a = SokobanState (MS.State SokobanStateInfo a)
-                           deriving (Monad, MonadState SokobanStateInfo)
-
-  getPlayerPosition :: SokobanState Point
-  getPlayerPosition = player `liftM` get
-
-  putPlayerPosition :: Point -> SokobanState ()
-  putPlayerPosition position = get >>= \state -> put (state {player = position})
-
-  isValidMove 
+  main :: IO ()
+  main = do window <- initScr
+            initCurses
+            mvWAddStr window 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
+            move 1 0
+            refresh
+            progLoop
 
   processKey :: Key -> ()
   processKey KeyUp    = undefined
@@ -59,10 +38,3 @@ module HaskBan where
                   else do return (processKey key)
                           progLoop
 
-  main :: IO ()
-  main = do window <- initScr
-            initCurses
-            mvWAddStr window 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
-            move 1 0
-            refresh
-            progLoop
