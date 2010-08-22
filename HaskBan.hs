@@ -39,7 +39,21 @@ module HaskBan where
   putPlayerPosition :: Point -> SokobanState ()
   putPlayerPosition position = get >>= \state -> put (state {player = position})
 
-  main = do initCurses
-            window <- initScr
---            key <- getCh
-            endWin
+  processKey = undefined
+
+  shouldTerminate :: Key -> Bool
+  shouldTerminate (KeyChar '\ESC') = True
+  shouldTerminate _                = False 
+
+  progLoop :: IO ()
+  progLoop = do key <- getCh
+                return ()
+                if shouldTerminate key
+                  then do endWin
+                  else do return (processKey key)
+                          progLoop
+
+  main :: IO ()
+  main = do window <- initScr
+            initCurses
+            progLoop
