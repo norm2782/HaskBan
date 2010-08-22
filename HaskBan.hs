@@ -5,6 +5,7 @@ module HaskBan where
   import qualified Data.Map as M
   import Control.Monad.State as MS
   import Control.Monad (liftM, mapM_)
+  import UI.HSCurses.Curses
 
   data CellType = Wall
                 | Box
@@ -38,4 +39,7 @@ module HaskBan where
   putPlayerPosition :: Point -> SokobanState ()
   putPlayerPosition position = get >>= \state -> put (state {player = position})
 
-
+  main = do initCurses
+            window <- initScr
+--            key <- getCh
+            endWin
