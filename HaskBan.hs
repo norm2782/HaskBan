@@ -47,7 +47,6 @@ module HaskBan where
 
   progLoop :: IO ()
   progLoop = do key <- getCh
-                return ()
                 if shouldTerminate key
                   then do endWin
                   else do return (processKey key)
@@ -56,4 +55,7 @@ module HaskBan where
   main :: IO ()
   main = do window <- initScr
             initCurses
+            mvWAddStr window 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
+            move 1 0
+            refresh
             progLoop
