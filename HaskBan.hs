@@ -39,7 +39,14 @@ module HaskBan where
   putPlayerPosition :: Point -> SokobanState ()
   putPlayerPosition position = get >>= \state -> put (state {player = position})
 
-  processKey = undefined
+  isValidMove 
+
+  processKey :: Key -> ()
+  processKey KeyUp    = undefined
+  processKey KeyDown  = undefined
+  processKey KeyLeft  = undefined
+  processKey KeyRight = undefined
+  processKey _        = undefined
 
   shouldTerminate :: Key -> Bool
   shouldTerminate (KeyChar '\ESC') = True
