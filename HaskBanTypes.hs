@@ -28,5 +28,14 @@ module HaskBanTypes where
     cellMap :: SokoMap
   }
 
+  -- QUESTION: on it's own Module?
+  newtype SokobanState a = SokobanState (MS.State SokobanStateInfo a)
+                           deriving (Monad, MonadState SokobanStateInfo)
+
+  getPlayerPosition :: SokobanState Point
+  getPlayerPosition = player `liftM` get
+
+  putPlayerPosition :: Point -> SokobanState ()
+  putPlayerPosition position = get >>= \state -> put (state {player = position})
 
   

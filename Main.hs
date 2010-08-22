@@ -1,7 +1,7 @@
 module Main where
   
-  import HaskBan (mainAction)
+  import HaskBan (mainAction, jurrenMainAction)
 
-  main = mainAction 
+  main = jurrenMainAction
         
   
