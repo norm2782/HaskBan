@@ -44,5 +44,3 @@ module HaskBan.Types where
   -- QUESTION: on it's own Module?
   newtype SokobanState a = SokobanState (MS.State SokobanStateInfo a)
                            deriving (Monad, MonadState SokobanStateInfo)
-  
-  type GameMap = Map Int (Map Int CellType)
