@@ -46,6 +46,9 @@ module HaskBan (main) where
   isBox :: Point -> GameMap -> Bool
   isBox = isCellType Box
 
+  isPath :: Point -> GameMap -> Bool
+  isPath = isCellType Path
+
   isCellType :: CellType -> Point -> GameMap -> Bool
   isCellType c p m = getCellType p m == c
 
@@ -58,12 +61,14 @@ module HaskBan (main) where
   putPlayerPosition :: Point -> SokobanState ()
   putPlayerPosition position = get >>= \state -> put (state {player = position})
 
-  movePlayer :: (Point -> Point) -> SokobanState ()
-  movePlayer t = liftM t getPlayerPosition >>= \position ->
-                 when (canMoveTo position) (putPlayerPosition position)
+  movePlayer :: GameMap -> (Point -> Point) -> SokobanState ()
+  movePlayer g t = liftM t getPlayerPosition >>= \position ->
+                   when (canMoveTo g position t) (putPlayerPosition position)
 
-  canMoveTo :: Point -> Bool
-  canMoveTo p = True
+  canMoveTo :: GameMap -> Point -> (Point -> Point) -> Bool
+  canMoveTo g p t | isPath p g = True
+                  | isBox p g && not (isWall (t p) g) = True
+                  | otherwise = False
 
   shouldTerminate :: Key -> Bool
   shouldTerminate (KeyChar '\ESC') = True
