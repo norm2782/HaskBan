@@ -8,12 +8,10 @@ module HaskBan (mainAction, jurrenMainAction) where
   import Control.Monad (mapM_)
   import qualified Data.ByteString as BS
   
-  mainAction :: IO ()
-  mainAction = BS.readFile "input.in" >>= \contents ->
-               mapM_ (putStrLn . showCellMatrix) (runHaskBanParser contents)
-
   main :: IO ()
-  main = do window <- initScr
+  main = do BS.readFile "input.in" >>= \contents ->
+            mapM_ (putStrLn . showCellMatrix) (runHaskBanParser contents)
+            window <- initScr
             initCurses
             mvWAddStr window 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
             move 1 0
@@ -26,6 +24,12 @@ module HaskBan (mainAction, jurrenMainAction) where
   processKey KeyLeft  = undefined
   processKey KeyRight = undefined
   processKey _        = undefined
+  
+  getPlayerPosition :: SokobanState Point
+  getPlayerPosition = player `liftM` get
+
+  putPlayerPosition :: Point -> SokobanState ()
+  putPlayerPosition position = get >>= \state -> put (state {player = position})
 
   shouldTerminate :: Key -> Bool
   shouldTerminate (KeyChar '\ESC') = True

@@ -1,5 +1,8 @@
+{-# LANGUAGE NoMonomorphismRestriction, GeneralizedNewtypeDeriving #-}
 module HaskBanTypes where
   import qualified Data.Map as M
+  import Control.Monad (liftM, mapM_)
+  import Control.Monad.State as MS
 
   data CellType = Wall
                 | Player
@@ -7,13 +10,13 @@ module HaskBanTypes where
                 | Path
                 | Target (Maybe CellType) -- target could have a box on the initial state
                 | Empty -- for spaces that don't mean anything on the map (see input)
-                deriving (Eq, Ord)
+                deriving (Show, Eq, Ord)
 
   data Surrounding = Left CellType
                    | Right CellType
                    | Up CellType
                    | Down CellType
-                   deriving (Eq, Ord)
+                   deriving (Show, Eq, Ord)
   
   type CellMatrix = [[CellType]]
 
@@ -21,21 +24,14 @@ module HaskBanTypes where
 
   type SokoMap = M.Map Point CellType
 
-  data SokobanState = SokobanState {
+  data SokobanStateInfo = SokobanStateInfo {
     player :: Point,
     boxes :: [Point],
     targets :: [Point],
     cellMap :: SokoMap
-  }
+  } deriving (Show)
 
   -- QUESTION: on it's own Module?
   newtype SokobanState a = SokobanState (MS.State SokobanStateInfo a)
                            deriving (Monad, MonadState SokobanStateInfo)
-
-  getPlayerPosition :: SokobanState Point
-  getPlayerPosition = player `liftM` get
-
-  putPlayerPosition :: Point -> SokobanState ()
-  putPlayerPosition position = get >>= \state -> put (state {player = position})
-
   
