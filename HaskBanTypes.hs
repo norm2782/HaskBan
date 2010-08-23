@@ -13,13 +13,13 @@ module HaskBanTypes where
                 deriving (Eq, Ord)
 
   instance Show CellType where
-    show Wall = "#"
+    show Wall   = "#"
     show Player = "λ"
-    show Box = "$"
-    show Path = " "
+    show Box    = "$"
+    show Path   = " "
     show (Target (Nothing)) = "."
-    show (Target (Just _)) = "*"
-    show Empty = " "
+    show (Target (Just _))  = "*"
+    show Empty  = " "
 
   data Surrounding = Left CellType
                    | Right CellType
@@ -34,8 +34,8 @@ module HaskBanTypes where
   type SokoMap = M.Map Point CellType
 
   data SokobanStateInfo = SokobanStateInfo {
-    player :: Point,
-    boxes :: [Point],
+    player  :: Point,
+    boxes   :: [Point],
     targets :: [Point],
     cellMap :: SokoMap
   } deriving (Show)
