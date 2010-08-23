@@ -29,26 +29,29 @@ module HaskBan (main) where
   processKey KeyRight = undefined
   processKey _        = undefined
 
-  walkUp :: Point -> Point
-  walkUp (x, y)    = (x, y - 1)
+  translateUp :: Point -> Point
+  translateUp (x, y)    = (x, y - 1)
 
-  walkDown :: Point -> Point
-  walkDown (x, y)   = (x, y + 1)
+  translateDown :: Point -> Point
+  translateDown (x, y)  = (x, y + 1)
 
-  walkLeft :: Point -> Point
-  walkLeft (x, y)  = (x - 1, y)
+  translateLeft :: Point -> Point
+  translateLeft (x, y)  = (x - 1, y)
 
-  walkRight :: Point -> Point
-  walkRight (x, y) = (x + 1, y)
+  translateRight :: Point -> Point
+  translateRight (x, y) = (x + 1, y)
   
 --  isWall :: Point -> Map -> Bool
-  --isWall p m = isCellType p Wall m 
+--  isWall = isCellType Wall
 
- -- isBox :: Point -> Map -> Bool
- -- isBox p m :: isCellType p Box m
+--  isBox :: Point -> Map -> Bool
+--  isBox :: isCellType Box
 
---  isCellType :: Point -> CellType -> Map -> Bool
---  isCellType (x, y) c m = Map.elemAt y (snd (Map.elemAt x m)) == c
+--  isCellType :: CellType -> Point -> Map -> Bool
+  isCellType c p m = getCellType p m == c
+
+--  getCellType :: Point -> Map -> CellType
+  getCellType (x, y) m = Map.elemAt y (snd (Map.elemAt x m))
 
   getPlayerPosition :: SokobanState Point
   getPlayerPosition = player `liftM` get
