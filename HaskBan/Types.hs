@@ -31,7 +31,7 @@ module HaskBan.Types where
   type CellMatrix = [[CellType]]
 
   type Point = (Int, Int)
-
+  type Translation = (Point -> Point)
   type SokoMap = M.Map Point CellType
 
   data SokobanStateInfo = SokobanStateInfo {

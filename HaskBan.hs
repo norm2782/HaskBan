@@ -28,16 +28,16 @@ module HaskBan (main) where
   processKey KeyRight = undefined
   processKey _        = undefined
 
-  translateUp :: Point -> Point
+  translateUp :: Translation
   translateUp (x, y)    = (x, y - 1)
 
-  translateDown :: Point -> Point
+  translateDown :: Translation
   translateDown (x, y)  = (x, y + 1)
 
-  translateLeft :: Point -> Point
+  translateLeft :: Translation
   translateLeft (x, y)  = (x - 1, y)
 
-  translateRight :: Point -> Point
+  translateRight :: Translation
   translateRight (x, y) = (x + 1, y)
   
   isWall :: Point -> GameMap -> Bool
@@ -61,14 +61,17 @@ module HaskBan (main) where
   putPlayerPosition :: Point -> SokobanState ()
   putPlayerPosition position = get >>= \state -> put (state {player = position})
 
-  movePlayer :: GameMap -> (Point -> Point) -> SokobanState ()
+  movePlayer :: GameMap -> Translation -> SokobanState ()
   movePlayer g t = liftM t getPlayerPosition >>= \position ->
                    when (canMoveTo g position t) (putPlayerPosition position)
 
-  canMoveTo :: GameMap -> Point -> (Point -> Point) -> Bool
+  -- Verify if the player can move to the point that is provided.
+  -- In case the new pointis a box, the next position needs to be
+  -- checked as well. Hence, the original translation function is provided as well.
+  canMoveTo :: GameMap -> Point -> Translation -> Bool
   canMoveTo g p t | isPath p g = True
                   | isBox p g && not (isWall (t p) g) = True
-                  | otherwise = False
+                  | otherwise  = False
 
   shouldTerminate :: Key -> Bool
   shouldTerminate (KeyChar '\ESC') = True
