@@ -4,3 +4,4 @@ Link for input test cases: http://webdocs.cs.ualberta.ca/~games/Sokoban/status.h
 
 Dependencies:
   * hscurses
+  * HUnit (for testing purposes)

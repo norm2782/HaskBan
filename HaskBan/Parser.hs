@@ -11,9 +11,9 @@
 --  3) The parsing will conclude when you get to the EOF or when the word END is parsed
 --
 -- parseSokoMap
-module HaskBanParser (runHaskBanParser) where
+module HaskBan.Parser (runHaskBanParser, validCellMatrix) where
 
-  import HaskBanTypes (CellType(..), CellMatrix, SokoMap)
+  import HaskBan.Types (CellType(..), CellMatrix, SokoMap)
   import Data.ByteString (ByteString)
   import Text.Parsec hiding (many, optional)
   import Text.Parsec.ByteString
@@ -42,14 +42,14 @@ module HaskBanParser (runHaskBanParser) where
       Left e -> error (show e)
       Right celltypes -> celltypes
 
-  {--
-  validCellTypeMatrix :: [[CellType]] -> Maybe [[CellType]]
-  validCellTypeMatrix [] = Just []
-  validCellTypeMatrix matrix@(x:xs) = if isValid then Just matrix else Nothing
+  validCellMatrix :: CellMatrix -> Maybe CellMatrix 
+  validCellMatrix [] = Just []
+  validCellMatrix matrix@(row:rows) = if rowsHaveSameLength then (Just matrix) else Nothing
     where
-      lx = length x
-      isValid = all id (map ((lx==) . length xs))
+      rowLength = length row
+      rowsHaveSameLength = all id $ map ((rowLength==) . length) rows
 
+  {--
   cellTypeMatrixToSokoMap :: [[CellType]] -> SokoMap
   cellTypeMatrixToSokoMap xs = helper 0 xs
     where

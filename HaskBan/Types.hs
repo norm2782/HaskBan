@@ -1,5 +1,5 @@
 {-# LANGUAGE NoMonomorphismRestriction, GeneralizedNewtypeDeriving #-}
-module HaskBanTypes where
+module HaskBan.Types where
   import qualified Data.Map as M
   import Control.Monad (liftM, mapM_)
   import Control.Monad.State as MS

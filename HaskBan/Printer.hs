@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances, TypeSynonymInstances #-}
-module HaskBanPrinter where
+module HaskBan.Printer where
 
-  import HaskBanTypes (CellType(..), CellMatrix)
+  import HaskBan.Types (CellType(..), CellMatrix)
   import Data.List (intercalate, intersperse)
 
   showCellMatrix :: CellMatrix -> String

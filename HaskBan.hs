@@ -2,9 +2,9 @@
 module HaskBan (main) where
   
   import UI.HSCurses.Curses
-  import HaskBanTypes
-  import HaskBanParser (runHaskBanParser)
-  import HaskBanPrinter 
+  import HaskBan.Types
+  import HaskBan.Parser (runHaskBanParser)
+  import HaskBan.Printer 
   import Control.Monad (mapM_, liftM)
   import Control.Monad.State
   import qualified Data.ByteString as BS
