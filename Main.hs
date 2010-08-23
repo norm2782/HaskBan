@@ -1,7 +1,6 @@
 module Main where
+  import qualified HaskBan as HB
   
-  import HaskBan (mainAction, jurrenMainAction)
-
-  main = main
+  main = HB.main
         
   

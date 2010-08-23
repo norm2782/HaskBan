@@ -1,22 +1,24 @@
 {-# LANGUAGE NoMonomorphismRestriction, GeneralizedNewtypeDeriving #-}
-module HaskBan (mainAction, jurrenMainAction) where
+module HaskBan (main) where
   
   import UI.HSCurses.Curses
   import HaskBanTypes
   import HaskBanParser (runHaskBanParser)
   import HaskBanPrinter 
-  import Control.Monad (mapM_)
+  import Control.Monad (mapM_, liftM)
+  import Control.Monad.State
   import qualified Data.ByteString as BS
   
   main :: IO ()
-  main = do BS.readFile "input.in" >>= \contents ->
-            mapM_ (putStrLn . showCellMatrix) (runHaskBanParser contents)
-            window <- initScr
-            initCurses
-            mvWAddStr window 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
-            move 1 0
-            refresh
-            progLoop
+  main = do 
+    contents <- BS.readFile "input.in" 
+    mapM_ (putStrLn . showCellMatrix) (runHaskBanParser contents)
+    window <- initScr
+    initCurses
+    mvWAddStr window 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
+    move 1 0
+    refresh
+    progLoop
 
   processKey :: Key -> ()
   processKey KeyUp    = undefined

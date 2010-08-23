@@ -10,7 +10,16 @@ module HaskBanTypes where
                 | Path
                 | Target (Maybe CellType) -- target could have a box on the initial state
                 | Empty -- for spaces that don't mean anything on the map (see input)
-                deriving (Show, Eq, Ord)
+                deriving (Eq, Ord)
+
+  instance Show CellType where
+    show Wall = "#"
+    show Player = "λ"
+    show Box = "$"
+    show Path = " "
+    show (Target (Nothing)) = "."
+    show (Target (Just _)) = "*"
+    show Empty = " "
 
   data Surrounding = Left CellType
                    | Right CellType
