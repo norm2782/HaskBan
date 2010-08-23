@@ -3,6 +3,7 @@ module HaskBanTypes where
   import qualified Data.Map as M
   import Control.Monad (liftM, mapM_)
   import Control.Monad.State as MS
+  import Data.Map (Map)
 
   data CellType = Wall
                 | Player
@@ -44,3 +45,4 @@ module HaskBanTypes where
   newtype SokobanState a = SokobanState (MS.State SokobanStateInfo a)
                            deriving (Monad, MonadState SokobanStateInfo)
   
+  type GameMap = Map Int (Map Int CellType)

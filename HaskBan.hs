@@ -8,8 +8,7 @@ module HaskBan (main) where
   import Control.Monad (mapM_, liftM)
   import Control.Monad.State
   import qualified Data.ByteString as BS
-  import Data.Map (Map)
-  import qualified Data.Map as Map
+  import Data.Map ((!), Map)
   
   main :: IO ()
   main = do 
@@ -41,30 +40,30 @@ module HaskBan (main) where
   translateRight :: Point -> Point
   translateRight (x, y) = (x + 1, y)
   
---  isWall :: Point -> Map -> Bool
---  isWall = isCellType Wall
+  isWall :: Point -> GameMap -> Bool
+  isWall = isCellType Wall
 
---  isBox :: Point -> Map -> Bool
---  isBox :: isCellType Box
+  isBox :: Point -> GameMap -> Bool
+  isBox = isCellType Box
 
---  isCellType :: CellType -> Point -> Map -> Bool
+  isCellType :: CellType -> Point -> GameMap -> Bool
   isCellType c p m = getCellType p m == c
 
---  getCellType :: Point -> Map -> CellType
-  getCellType (x, y) m = Map.elemAt y (snd (Map.elemAt x m))
+  getCellType :: Point -> GameMap -> CellType
+  getCellType (x, y) m = (m ! y) ! x
 
   getPlayerPosition :: SokobanState Point
   getPlayerPosition = player `liftM` get
 
   putPlayerPosition :: Point -> SokobanState ()
   putPlayerPosition position = get >>= \state -> put (state {player = position})
-
+{-
   movePlayer :: (Point -> Point) -> SokobanState ()
   movePlayer t = do position <- get
                     if canMoveTo (t position)
                       then putPlayerPosition (t position)
                       else putPlayerPosition position
-
+-}
   canMoveTo :: Point -> Bool
   canMoveTo p = True
 
