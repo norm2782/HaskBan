@@ -3,6 +3,7 @@ module HaskBan.Types where
   import qualified Data.Map as M
   import Control.Monad (liftM, mapM_)
   import Control.Monad.State as MS
+  import Data.Map (Map)
 
   data CellType = Wall
                 | Player
@@ -13,13 +14,13 @@ module HaskBan.Types where
                 deriving (Eq, Ord)
 
   instance Show CellType where
-    show Wall = "#"
+    show Wall   = "#"
     show Player = "λ"
-    show Box = "$"
-    show Path = " "
+    show Box    = "$"
+    show Path   = " "
     show (Target (Nothing)) = "."
-    show (Target (Just _)) = "*"
-    show Empty = " "
+    show (Target (Just _))  = "*"
+    show Empty  = " "
 
   data Surrounding = Left CellType
                    | Right CellType
@@ -34,8 +35,8 @@ module HaskBan.Types where
   type SokoMap = M.Map Point CellType
 
   data SokobanStateInfo = SokobanStateInfo {
-    player :: Point,
-    boxes :: [Point],
+    player  :: Point,
+    boxes   :: [Point],
     targets :: [Point],
     cellMap :: SokoMap
   } deriving (Show)
@@ -44,3 +45,4 @@ module HaskBan.Types where
   newtype SokobanState a = SokobanState (MS.State SokobanStateInfo a)
                            deriving (Monad, MonadState SokobanStateInfo)
   
+  type GameMap = Map Int (Map Int CellType)

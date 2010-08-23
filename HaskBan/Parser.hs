@@ -21,20 +21,22 @@ module HaskBan.Parser (runHaskBanParser, validCellMatrix) where
 
   readInt :: String -> Int
   readInt = read
+
   parseInt = readInt <$> (many digit)
 
   parsePlayer = char '@' *> pure Player
-  parseWall = char '#' *> pure Wall
-  parseBox  = char '$' *> pure Box
-  parsePath = char ' ' *> pure Path
+  parseWall   = char '#' *> pure Wall
+  parseBox    = char '$' *> pure Box
+  parsePath   = char ' ' *> pure Path
   parseTarget = char '.' *> pure (Target Nothing)
   parseRockOnTarget = char '*' *> pure (Target (Just Box))
 
-  parseCellType = choice [parseWall, parseBox, parsePath, parseTarget, parsePlayer, parseRockOnTarget]
+  parseCellType    = choice [parseWall, parseBox, parsePath, parseTarget,
+                             parsePlayer, parseRockOnTarget]
   parseCellTypeRow = many parseCellType <* char '\n'
-  parseCellMatrix = string "Level " *> parseInt *> spaces *> (many parseCellTypeRow)
-  parseEndSection = spaces *> string "END"
-  parseHaskBan = many parseCellMatrix <* optional parseEndSection
+  parseCellMatrix  = string "Level " *> parseInt *> spaces *> (many parseCellTypeRow)
+  parseEndSection  = spaces *> string "END"
+  parseHaskBan     = many parseCellMatrix <* optional parseEndSection
 
   runHaskBanParser :: ByteString -> [CellMatrix]
   runHaskBanParser input = 
