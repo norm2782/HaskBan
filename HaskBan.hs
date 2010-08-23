@@ -57,13 +57,11 @@ module HaskBan (main) where
 
   putPlayerPosition :: Point -> SokobanState ()
   putPlayerPosition position = get >>= \state -> put (state {player = position})
-{-
+
   movePlayer :: (Point -> Point) -> SokobanState ()
-  movePlayer t = do position <- get
-                    if canMoveTo (t position)
-                      then putPlayerPosition (t position)
-                      else putPlayerPosition position
--}
+  movePlayer t = liftM t getPlayerPosition >>= \position ->
+                 when (canMoveTo position) (putPlayerPosition position)
+
   canMoveTo :: Point -> Bool
   canMoveTo p = True
 
