@@ -65,6 +65,9 @@ module HaskBan (main) where
   movePlayer g t = liftM t getPlayerPosition >>= \position ->
                    when (canMoveTo g position t) (putPlayerPosition position)
 
+  moveBox :: GameMap -> Point -> Translation -> SokobanState()
+  moveBox = undefined
+
   -- Verify if the player can move to the point that is provided.
   -- In case the new pointis a box, the next position needs to be
   -- checked as well. Hence, the original translation function is provided as well.
