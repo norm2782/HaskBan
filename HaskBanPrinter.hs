@@ -6,6 +6,3 @@ module HaskBanPrinter where
 
   showCellMatrix :: CellMatrix -> String
   showCellMatrix = intercalate "\n" . map (concat . (map show))
-
-    
-    
