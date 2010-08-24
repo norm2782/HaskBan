@@ -15,6 +15,7 @@ module HaskBan (main) where
     contents <- BS.readFile "input.in" 
     window <- initScr
     initCurses
+    cursSet CursorInvisible
     mvWAddStr window 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
     mapM_ ((mvWAddStr window 1 0) . showCellMatrix) (runHaskBanParser contents)
     refresh
@@ -39,10 +40,10 @@ module HaskBan (main) where
                       else return ()
   
   getTranslation :: Key -> Translation
-  getTranslation KeyUp    = translateUp
-  getTranslation KeyDown  = translateDown
-  getTranslation KeyLeft  = translateLeft
-  getTranslation KeyRight = translateRight
+  getTranslation (KeyChar 'k') = translateUp
+  getTranslation (KeyChar 'j') = translateDown
+  getTranslation (KeyChar 'h') = translateLeft
+  getTranslation (KeyChar 'l') = translateRight
 
   translateUp :: Translation
   translateUp (x, y)    = (x, y - 1)
