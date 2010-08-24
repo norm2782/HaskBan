@@ -12,8 +12,9 @@
 --
 module HaskBan.Parser (parseSokoMaps, runHaskBanParser, validCellMatrix, cellMatrixToSokoMap) where
 
-  import HaskBan.Types (CellType(..), CellMatrix, SokoMap)
+  import HaskBan.Types (CellType(..), CellMatrix, SokoMap, SokoMaps)
   import Data.ByteString (ByteString)
+  import Data.Maybe (catMaybes)
   import Data.List (foldl')
   import qualified Data.IntMap as IM
   import qualified Data.Map as M
@@ -43,19 +44,16 @@ module HaskBan.Parser (parseSokoMaps, runHaskBanParser, validCellMatrix, cellMat
   parseEndSection  = string "END"
   parseHaskBan     = (many parseCellMatrix) <* optional parseEndSection
 
-  runHaskBanParser :: ByteString -> Maybe [CellMatrix]
+  runHaskBanParser :: ByteString -> [CellMatrix]
   runHaskBanParser input = 
     case parse parseHaskBan "()" input of
       Left e -> error (show e)
-      Right cells -> (Just cells)
+      Right cells -> (catMaybes . map validCellMatrix) cells
 
 
   -- | Main Method
-  parseSokoMaps :: ByteString -> Maybe (IM.IntMap SokoMap)
-  parseSokoMaps bs = (runHaskBanParser bs) >>= 
-                     mapM validCellMatrix >>= 
-                     mapM cellMatrixToSokoMap >>=
-                     return . IM.fromList . (\sokoMaps -> zip [0..] sokoMaps)
+  parseSokoMaps :: ByteString -> SokoMaps
+  parseSokoMaps bs = IM.fromList . zip [0..] . map cellMatrixToSokoMap . runHaskBanParser $ bs
 
   -- | CellMatrix methods 
   --
@@ -68,8 +66,8 @@ module HaskBan.Parser (parseSokoMaps, runHaskBanParser, validCellMatrix, cellMat
 
   -- |  This method is assuming it is recieving a valid CellMatrix
   --
-  cellMatrixToSokoMap :: CellMatrix -> Maybe SokoMap
-  cellMatrixToSokoMap cellMatrix = Just $ snd (foldl' columnHelper (0, M.empty) cellMatrix)
+  cellMatrixToSokoMap :: CellMatrix -> SokoMap
+  cellMatrixToSokoMap cellMatrix = snd (foldl' columnHelper (0, M.empty) cellMatrix)
     where
       columnHelper (i, sokoMap) cellTypeRow = 
         let (_, sokoMap') = foldl' rowHelper ((i, 0), sokoMap) cellTypeRow
