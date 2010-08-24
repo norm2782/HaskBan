@@ -3,7 +3,7 @@ module HaskBan (main) where
   
   import UI.HSCurses.Curses
   import HaskBan.Types
-  import HaskBan.Parser (runHaskBanParser)
+  import HaskBan.Parser (parseSokoMaps)
   import HaskBan.Printer 
   import Control.Monad (mapM_, liftM)
   import Control.Monad.State
@@ -17,7 +17,7 @@ module HaskBan (main) where
     initCurses
     cursSet CursorInvisible
     mvWAddStr window 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
-    mapM_ ((mvWAddStr window 1 0) . showCellMatrix) (runHaskBanParser contents)
+    --mapM_ ((mvWAddStr window 1 0) . showCellMatrix) (runHaskBanParser contents)
     refresh
     progLoop
 

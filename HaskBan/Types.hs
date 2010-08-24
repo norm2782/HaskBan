@@ -3,6 +3,7 @@ module HaskBan.Types where
   import qualified Data.Map as M
   import Control.Monad (liftM, mapM_)
   import Control.Monad.State as MS
+  import Data.IntMap (IntMap)
   import Data.Map (Map)
 
   data CellType = Wall
@@ -32,9 +33,11 @@ module HaskBan.Types where
 
   type Point = (Int, Int)
   type Translation = (Point -> Point)
-  type SokoMap = M.Map Point CellType
+  type SokoMap = Map Point CellType
+  type SokoMaps = IntMap SokoMap
 
   data SokobanStateInfo = SokobanStateInfo {
+    currentLevel :: Int,
     player  :: Point,
     boxes   :: [Point],
     targets :: [Point],
