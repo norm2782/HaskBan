@@ -28,44 +28,53 @@ module HaskBan (main) where
   processKey KeyRight = undefined
   processKey _        = undefined
 
-  translateUp :: Point -> Point
+  translateUp :: Translation
   translateUp (x, y)    = (x, y - 1)
 
-  translateDown :: Point -> Point
+  translateDown :: Translation
   translateDown (x, y)  = (x, y + 1)
 
-  translateLeft :: Point -> Point
+  translateLeft :: Translation
   translateLeft (x, y)  = (x - 1, y)
 
-  translateRight :: Point -> Point
+  translateRight :: Translation
   translateRight (x, y) = (x + 1, y)
   
-  isWall :: Point -> GameMap -> Bool
+  isWall :: Point -> SokoMap -> Bool
   isWall = isCellType Wall
 
-  isBox :: Point -> GameMap -> Bool
+  isBox :: Point -> SokoMap -> Bool
   isBox = isCellType Box
 
-  isCellType :: CellType -> Point -> GameMap -> Bool
+  isPath :: Point -> SokoMap -> Bool
+  isPath = isCellType Path
+
+  isCellType :: CellType -> Point -> SokoMap -> Bool
   isCellType c p m = getCellType p m == c
 
-  getCellType :: Point -> GameMap -> CellType
-  getCellType (x, y) m = (m ! y) ! x
+  getCellType :: Point -> SokoMap -> CellType
+  getCellType p m = m ! p
 
   getPlayerPosition :: SokobanState Point
   getPlayerPosition = player `liftM` get
 
   putPlayerPosition :: Point -> SokobanState ()
   putPlayerPosition position = get >>= \state -> put (state {player = position})
-{-
-  movePlayer :: (Point -> Point) -> SokobanState ()
-  movePlayer t = do position <- get
-                    if canMoveTo (t position)
-                      then putPlayerPosition (t position)
-                      else putPlayerPosition position
--}
-  canMoveTo :: Point -> Bool
-  canMoveTo p = True
+
+  movePlayer :: SokoMap -> Translation -> SokobanState ()
+  movePlayer g t = liftM t getPlayerPosition >>= \position ->
+                   when (canMoveTo g position t) (putPlayerPosition position)
+
+  moveBox :: SokoMap -> Point -> Translation -> SokobanState()
+  moveBox = undefined
+
+  -- Verify if the player can move to the point that is provided.
+  -- In case the new pointis a box, the next position needs to be
+  -- checked as well. Hence, the original translation function is provided as well.
+  canMoveTo :: SokoMap -> Point -> Translation -> Bool
+  canMoveTo g p t | isPath p g = True
+                  | isBox p g && not (isWall (t p) g) = True
+                  | otherwise  = False
 
   shouldTerminate :: Key -> Bool
   shouldTerminate (KeyChar '\ESC') = True

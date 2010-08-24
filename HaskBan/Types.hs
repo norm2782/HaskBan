@@ -31,7 +31,7 @@ module HaskBan.Types where
   type CellMatrix = [[CellType]]
 
   type Point = (Int, Int)
-
+  type Translation = (Point -> Point)
   type SokoMap = M.Map Point CellType
 
   data SokobanStateInfo = SokobanStateInfo {
@@ -44,5 +44,3 @@ module HaskBan.Types where
   -- QUESTION: on it's own Module?
   newtype SokobanState a = SokobanState (MS.State SokobanStateInfo a)
                            deriving (Monad, MonadState SokobanStateInfo)
-  
-  type GameMap = Map Int (Map Int CellType)
