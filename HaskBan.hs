@@ -25,22 +25,25 @@ module HaskBan (main) where
   progLoop = do key <- getCh
                 if shouldTerminate key
                   then do endWin
-                  else do return (processKey key)
+                  else do return (keyPressed key)
                           progLoop
+
+  keyPressed :: Key -> SokobanState()
+  keyPressed k = do map <- getMap
+                    pos <- getPlayerPosition
+                    let t = getTranslation k
+                    if canMoveTo map pos t
+                      then do movePlayer map t
+                              if isBox (t pos) map
+                                then moveBox map (t pos) t
+                                else return ()
+                      else return ()
   
-  processKey :: Key -> SokobanState ()
-  processKey KeyUp    = do map <- getMap
-                           pos <- getPlayerPosition
-                           if canMoveTo map pos translateUp
-                             then do movePlayer map translateUp
-                                     if isBox (translateUp pos) map
-                                       then moveBox map (translateUp pos) translateUp
-                                       else return ()
-                             else return ()
-  processKey KeyDown  = undefined
-  processKey KeyLeft  = undefined
-  processKey KeyRight = undefined
-  processKey _        = undefined
+  getTranslation :: Key -> Translation
+  getTranslation KeyUp    = translateUp
+  getTranslation KeyDown  = translateDown
+  getTranslation KeyLeft  = translateLeft
+  getTranslation KeyRight = translateRight
 
   translateUp :: Translation
   translateUp (x, y)    = (x, y - 1)
