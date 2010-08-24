@@ -15,6 +15,7 @@ module HaskBan (main) where
     contents <- BS.readFile "input.in" 
     initCurses
     echo False
+    keypad stdScr True
     cursSet CursorInvisible
     mvWAddStr stdScr 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
     refresh
@@ -40,17 +41,11 @@ module HaskBan (main) where
                       else return ()
   
   getTranslation :: Key -> Translation
-  getTranslation (KeyChar 'k') = translateUp
-  getTranslation (KeyChar 'j') = translateDown
-  getTranslation (KeyChar 'h') = translateLeft
-  getTranslation (KeyChar 'l') = translateRight
-  {-
-  getTranslation (KeyUp) = translateUp
-  getTranslation (KeyDown) = translateDown
-  getTranslation (KeyLeft) = translateLeft
-  getTranslation (KeyRight) = translateRight
-  -}
-
+  getTranslation k | k == KeyUp    || k == (KeyChar 'k') = translateUp
+                   | k == KeyDown  || k == (KeyChar 'j') = translateDown
+                   | k == KeyLeft  || k == (KeyChar 'h') = translateLeft
+                   | k == KeyRight || k == (KeyChar 'l') = translateRight
+  
   translateUp :: Translation
   translateUp (x, y)    = (x, y - 1)
 
