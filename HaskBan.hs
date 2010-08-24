@@ -16,7 +16,7 @@ module HaskBan (main) where
     window <- initScr
     initCurses
     mvWAddStr window 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
-    mapM_ ((mvWAddStr window 1 0) . showCellMatrix) (runHaskBanParser contents)
+    --mapM_ ((mvWAddStr window 1 0) . showCellMatrix) (runHaskBanParser contents)
     refresh
     progLoop
 

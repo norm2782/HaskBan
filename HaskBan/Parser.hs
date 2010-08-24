@@ -29,24 +29,24 @@ module HaskBan.Parser (parseSokoMaps, runHaskBanParser, validCellMatrix, cellMat
 
   -- | Custom Parsers (Parsec) 
   -- 
-  parseInt = readInt <$> (many digit)
-  parsePlayer = Player <$ char '@' 
-  parseWall   = Wall <$ char '#' 
-  parseBox    = Box <$ char '$'
-  parsePath   = Path <$ char ' '
-  parseTarget = Target Nothing <$ char '.'
-  parseRockOnTarget = Target (Just Box) <$ char '*' 
+  pInt = readInt <$> (many digit)
+  pPlayer = Player <$ char '@' 
+  pWall   = Wall <$ char '#' 
+  pBox    = Box <$ char '$'
+  pPath   = Path <$ char ' '
+  pTarget = Target Nothing <$ char '.'
+  pRockOnTarget = Target (Just Box) <$ char '*' 
 
-  parseCellType    = choice [parseWall, parseBox, parsePath, parseTarget,
-                             parsePlayer, parseRockOnTarget]
-  parseCellTypeRow = many1 parseCellType <* char '\n'
-  parseCellMatrix  = string "Level" *> spaces *> parseInt *> spaces *> (many parseCellTypeRow) <* spaces
-  parseEndSection  = string "END"
-  parseHaskBan     = (many parseCellMatrix) <* optional parseEndSection
+  pCellType    = choice [pWall, pBox, pPath, pTarget,
+                             pPlayer, pRockOnTarget]
+  pCellTypeRow = many1 pCellType <* char '\n'
+  pCellMatrix  = string "Level" *> spaces *> pInt *> spaces *> (many pCellTypeRow) <* spaces
+  pEndSection  = string "END"
+  pHaskBan     = (many pCellMatrix) <* optional pEndSection
 
   runHaskBanParser :: ByteString -> [CellMatrix]
   runHaskBanParser input = 
-    case parse parseHaskBan "()" input of
+    case parse pHaskBan "()" input of
       Left e -> error (show e)
       Right cells -> (catMaybes . map validCellMatrix) cells
 
