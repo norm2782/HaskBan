@@ -39,9 +39,7 @@ module HaskBan (main) where
                       let transl = getTranslation key
                       if canMoveTo map pos transl
                         then do movePlayer map transl
-                                if isBox (transl pos) map
-                                  then moveBox map (transl pos) transl
-                                  else return ()
+                                when (isBox (transl pos) map) (moveBox map (transl pos) transl)
                         else return ()
   
   getTranslation :: Key -> Translation
@@ -91,7 +89,7 @@ module HaskBan (main) where
 
   movePlayer :: SokoMap -> Translation -> SokobanState ()
   movePlayer sMap transl = liftM transl getPlayerPosition >>= \position ->
-                   when (canMoveTo sMap position transl) (putPlayerPosition position)
+                           when (canMoveTo sMap position transl) (putPlayerPosition position)
 
   moveBox :: SokoMap -> Point -> Translation -> SokobanState()
   moveBox = undefined
@@ -101,7 +99,7 @@ module HaskBan (main) where
   -- checked as well. Hence, the original translation function is provided as well.
   canMoveTo :: SokoMap -> Point -> Translation -> Bool
   canMoveTo sMap point transl | isPath point sMap = True
-                              | isBox point sMap && not (isWall (transl point) sMap) = True
+                              | isBox  point sMap && not (isWall (transl point) sMap) = True
                               | otherwise  = False
 
   shouldTerminate :: Key -> Bool
