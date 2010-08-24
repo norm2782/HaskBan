@@ -21,8 +21,22 @@ module HaskBan (main) where
     refresh
     progLoop
 
-  processKey :: Key -> ()
-  processKey KeyUp    = undefined
+  progLoop :: IO ()
+  progLoop = do key <- getCh
+                if shouldTerminate key
+                  then do endWin
+                  else do return (processKey key)
+                          progLoop
+  
+  processKey :: Key -> SokobanState ()
+  processKey KeyUp    = do map <- getMap
+                           pos <- getPlayerPosition
+                           if canMoveTo map pos translateUp
+                             then do movePlayer map translateUp
+                                     if isBox (translateUp pos) map
+                                       then moveBox map (translateUp pos) translateUp
+                                       else return ()
+                             else return ()
   processKey KeyDown  = undefined
   processKey KeyLeft  = undefined
   processKey KeyRight = undefined
@@ -61,6 +75,12 @@ module HaskBan (main) where
   putPlayerPosition :: Point -> SokobanState ()
   putPlayerPosition position = get >>= \state -> put (state {player = position})
 
+  getMap :: SokobanState SokoMap
+  getMap = sokoMap `liftM` get 
+
+  putMap :: SokoMap -> SokobanState ()
+  putMap map = get >>= \state -> put (state {sokoMap = map})
+
   movePlayer :: SokoMap -> Translation -> SokobanState ()
   movePlayer g t = liftM t getPlayerPosition >>= \position ->
                    when (canMoveTo g position t) (putPlayerPosition position)
@@ -79,11 +99,3 @@ module HaskBan (main) where
   shouldTerminate :: Key -> Bool
   shouldTerminate (KeyChar '\ESC') = True
   shouldTerminate _                = False 
-
-  progLoop :: IO ()
-  progLoop = do key <- getCh
-                if shouldTerminate key
-                  then do endWin
-                  else do return (processKey key)
-                          progLoop
-
