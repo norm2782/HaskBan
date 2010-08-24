@@ -13,11 +13,10 @@ module HaskBan (main) where
   main :: IO ()
   main = do 
     contents <- BS.readFile "input.in" 
-    mapM_ (putStrLn . showCellMatrix) (runHaskBanParser contents)
     window <- initScr
     initCurses
     mvWAddStr window 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
-    move 1 0
+    mapM_ ((mvWAddStr window 1 0) . showCellMatrix) (runHaskBanParser contents)
     refresh
     progLoop
 
