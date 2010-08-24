@@ -18,8 +18,12 @@ module HaskBan (main) where
     keypad stdScr True
     cursSet CursorInvisible
     mvWAddStr stdScr 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
+    showMoves 0
     refresh
     progLoop
+
+  showMoves :: Int -> IO ()
+  showMoves s = mvWAddStr stdScr 3 30 ("Number of moves: " ++ show s)
 
   progLoop :: IO ()
   progLoop = do --mvWAddStr stdScr 1 0 (showSokoMap (return getMap))
