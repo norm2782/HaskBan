@@ -38,7 +38,7 @@ module HaskBan.Types where
     player  :: Point,
     boxes   :: [Point],
     targets :: [Point],
-    cellMap :: SokoMap
+    gameMap :: SokoMap
   } deriving (Show)
 
   -- QUESTION: on it's own Module?

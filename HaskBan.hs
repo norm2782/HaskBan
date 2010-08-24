@@ -3,7 +3,7 @@ module HaskBan (main) where
   
   import UI.HSCurses.Curses
   import HaskBan.Types
-  import HaskBan.Parser (runHaskBanParser)
+  import HaskBan.Parser (parseSokoMaps)
   import HaskBan.Printer 
   import Control.Monad (mapM_, liftM)
   import Control.Monad.State
@@ -12,14 +12,17 @@ module HaskBan (main) where
   
   main :: IO ()
   main = do 
-    contents <- BS.readFile "input.in" 
-    mapM_ (putStrLn . showCellMatrix) (runHaskBanParser contents)
-    window <- initScr
-    initCurses
-    mvWAddStr window 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
-    move 1 0
-    refresh
-    progLoop
+    bs <- BS.readFile "input.in" 
+    case parseSokoMaps bs of
+      Nothing -> putStrLn "Error on the map"
+      Just sokoMaps -> do
+        -- mapM_ (putStrLn . ) (runHaskBanParser contents)
+        window <- initScr
+        initCurses
+        mvWAddStr window 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
+        move 1 0
+        refresh
+        progLoop
 
   processKey :: Key -> ()
   processKey KeyUp    = undefined

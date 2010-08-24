@@ -10,11 +10,12 @@
 --
 --  3) The parsing will conclude when you get to the EOF or when the word END is parsed
 --
-module HaskBan.Parser (runHaskBanParser, validCellMatrix, cellMatrixToSokoMap) where
+module HaskBan.Parser (parseSokoMaps, runHaskBanParser, validCellMatrix, cellMatrixToSokoMap) where
 
   import HaskBan.Types (CellType(..), CellMatrix, SokoMap)
   import Data.ByteString (ByteString)
   import Data.List (foldl')
+  import qualified Data.IntMap as IM
   import qualified Data.Map as M
   import Text.Parsec hiding (many, optional)
   import Text.Parsec.ByteString
@@ -42,11 +43,19 @@ module HaskBan.Parser (runHaskBanParser, validCellMatrix, cellMatrixToSokoMap) w
   parseEndSection  = string "END"
   parseHaskBan     = (many parseCellMatrix) <* optional parseEndSection
 
-  runHaskBanParser :: ByteString -> [CellMatrix]
+  runHaskBanParser :: ByteString -> Maybe [CellMatrix]
   runHaskBanParser input = 
     case parse parseHaskBan "()" input of
       Left e -> error (show e)
-      Right celltypes -> celltypes
+      Right cells -> (Just cells)
+
+
+  -- | Main Method
+  parseSokoMaps :: ByteString -> Maybe (IM.IntMap SokoMap)
+  parseSokoMaps bs = (runHaskBanParser bs) >>= 
+                     mapM validCellMatrix >>= 
+                     mapM cellMatrixToSokoMap >>=
+                     return . IM.fromList . (\sokoMaps -> zip [0..] sokoMaps)
 
   -- | CellMatrix methods 
   --
@@ -59,8 +68,8 @@ module HaskBan.Parser (runHaskBanParser, validCellMatrix, cellMatrixToSokoMap) w
 
   -- |  This method is assuming it is recieving a valid CellMatrix
   --
-  cellMatrixToSokoMap :: CellMatrix -> SokoMap
-  cellMatrixToSokoMap cellMatrix = snd (foldl' columnHelper (0, M.empty) cellMatrix)
+  cellMatrixToSokoMap :: CellMatrix -> Maybe SokoMap
+  cellMatrixToSokoMap cellMatrix = Just $ snd (foldl' columnHelper (0, M.empty) cellMatrix)
     where
       columnHelper (i, sokoMap) cellTypeRow = 
         let (_, sokoMap') = foldl' rowHelper ((i, 0), sokoMap) cellTypeRow
@@ -69,4 +78,3 @@ module HaskBan.Parser (runHaskBanParser, validCellMatrix, cellMatrixToSokoMap) w
         let sokoMap' =  M.insert (i, j) cellType sokoMap
         in ((i, j + 1), sokoMap') 
 
-  
