@@ -12,17 +12,13 @@ module HaskBan (main) where
   
   main :: IO ()
   main = do 
-    bs <- BS.readFile "input.in" 
-    case parseSokoMaps bs of
-      Nothing -> putStrLn "Error on the map"
-      Just sokoMaps -> do
-        -- mapM_ (putStrLn . ) (runHaskBanParser contents)
-        window <- initScr
-        initCurses
-        mvWAddStr window 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
-        move 1 0
-        refresh
-        progLoop
+    contents <- BS.readFile "input.in" 
+    window <- initScr
+    initCurses
+    mvWAddStr window 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
+    mapM_ ((mvWAddStr window 1 0) . showCellMatrix) (runHaskBanParser contents)
+    refresh
+    progLoop
 
   progLoop :: IO ()
   progLoop = do key <- getCh
