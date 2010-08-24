@@ -13,16 +13,16 @@ module HaskBan (main) where
   main :: IO ()
   main = do 
     contents <- BS.readFile "input.in" 
-    window <- initScr
     initCurses
+    echo False
     cursSet CursorInvisible
-    mvWAddStr window 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
-    --mapM_ ((mvWAddStr window 1 0) . showCellMatrix) (runHaskBanParser contents)
+    mvWAddStr stdScr 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
     refresh
     progLoop
 
   progLoop :: IO ()
-  progLoop = do key <- getCh
+  progLoop = do --mvWAddStr stdScr 1 0 (showSokoMap (return getMap))
+                key <- getCh
                 if shouldTerminate key
                   then do endWin
                   else do return (keyPressed key)
@@ -44,6 +44,12 @@ module HaskBan (main) where
   getTranslation (KeyChar 'j') = translateDown
   getTranslation (KeyChar 'h') = translateLeft
   getTranslation (KeyChar 'l') = translateRight
+  {-
+  getTranslation (KeyUp) = translateUp
+  getTranslation (KeyDown) = translateDown
+  getTranslation (KeyLeft) = translateLeft
+  getTranslation (KeyRight) = translateRight
+  -}
 
   translateUp :: Translation
   translateUp (x, y)    = (x, y - 1)
