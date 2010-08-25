@@ -10,16 +10,16 @@ module HaskBan.Logic where
     | otherwise = updateList fn x ys
 
   translateUp :: Translation
-  translateUp (x, y)    = (x, y - 1)
+  translateUp (row, column)    = (row - 1, column)
 
   translateDown :: Translation
-  translateDown (x, y)  = (x, y + 1)
+  translateDown (row, column)  = (row + 1, column)
 
   translateLeft :: Translation
-  translateLeft (x, y)  = (x - 1, y)
+  translateLeft (row, column)  = (row, column - 1)
 
   translateRight :: Translation
-  translateRight (x, y) = (x + 1, y)
+  translateRight (row, column) = (row, column + 1)
   
   isWall :: Point -> SokoMap -> Bool
   isWall = isCellType Wall

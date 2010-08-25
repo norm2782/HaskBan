@@ -94,7 +94,8 @@ module HaskBan.Monad where
     --liftIO $ refresh
     let ppos' = trans ppos
     -- liftIO $ putStrLn (show ppos')
-    when (canMoveTo sm ppos trans) $ do
+--    when (canMoveTo sm ppos trans) $ do
+    when True $ do
       -- liftIO $ putStrLn "Hey Joe Joe Joe" 
       when (isBox ppos' sm) $ do
         moveBox ppos' trans
