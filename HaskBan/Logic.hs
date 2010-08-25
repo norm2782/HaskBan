@@ -39,6 +39,8 @@ module HaskBan.Logic where
   -- checked as well. Hence, the original translation function is provided as well.
   canMoveTo :: SokoMap -> Point -> Translation -> Bool
   canMoveTo sMap point transl = (isPath point sMap) || 
-                                (isBox  point sMap && not (isWall (transl point) sMap)) 
+                                (isBox  point sMap && not (isWall trPt sMap)
+                                                   && not (isBox  trPt sMap))
+                                where trPt = transl point
 
 
