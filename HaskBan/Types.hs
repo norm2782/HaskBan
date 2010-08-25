@@ -20,7 +20,7 @@ module HaskBan.Types where
     show (Path Box) = "$"
     show (Path Empty) = " "
     show (Target Empty) = "."
-    show (Target Player) = "P"
+    show (Target Player) = "@"
     show (Target Box) = "*"
 
   type CellMatrix = [[CellType]]
