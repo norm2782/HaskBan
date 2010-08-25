@@ -13,8 +13,11 @@ module HaskBan.Test.LogicTest where
   --  let works = isPath  
   --  )
 
- -- testIsWallWorks = TestCase (do
-  --  sokoMap <
+  testIsWallWorks = TestCase (do
+    sokoMap <- getSokoMap
+    let isAWall = isWall (0,0) sokoMap
+    assertBool "Upper left corner is a wall" isAWall
+    )
 
   testCanMoveToWorksOnEmptyPaths = TestCase (do
     sokoMap <- getSokoMap
@@ -42,7 +45,8 @@ module HaskBan.Test.LogicTest where
 
   getSokoMap = (cellMatrixToSokoMap . head . runHaskBanParser) `liftM` (fixture "SokoMapCreationFixture.txt")
 
-  haskBanLogicTestSuite = TestList [testCanMoveToWorksOnEmptyPaths,
+  haskBanLogicTestSuite = TestList [testIsWallWorks,
+                                    testCanMoveToWorksOnEmptyPaths,
                                     testCanMoveToWorksWithValidBox,
                                     testCanMoveToFailsWithBoxFollowedByWall,
                                     testCanMoveToFailsWithBoxFollowedByBox]
