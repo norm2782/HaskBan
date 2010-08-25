@@ -1,2 +1,2 @@
 ghc --make Main.hs
-cp Main HaskBan
+mv Main HBan
