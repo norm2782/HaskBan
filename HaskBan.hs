@@ -13,6 +13,7 @@ module HaskBan (main) where
   import HaskBan.Printer 
 
   -- others
+  import Data.List (sort)
   import Control.Monad (mapM_, liftM, forever)
   import Control.Monad.State
   import qualified Data.ByteString as BS
@@ -24,30 +25,42 @@ module HaskBan (main) where
     window <- liftIO setupHaskBanGUI
     liftIO refresh
     liftIO $ showMoves 0
-    forever (readKeyAndPrint window)
+    loopUntil (readKeyAndPrint window)
+    liftIO $ endWin
 
-  readKeyAndPrint :: Window -> SokobanMonad ()
+  loopUntil :: (Monad m) => m Bool -> m ()
+  loopUntil action = do
+    shouldFinish <- action
+    when (not shouldFinish) (loopUntil action)
+
+  readKeyAndPrint :: Window -> SokobanMonad Bool
   readKeyAndPrint window = do
     displaySokobanMap window
     key <- liftIO getCh
     if shouldTerminate key
-      then liftIO endWin
+      then do
+        liftIO endWin
+        return True
       else do
-        keyPressed key
-        liftIO $ mvWAddStr window 20 0 (show key)
+        isFinished <- keyPressed key
+        --bs <- sort `liftM` getBoxesPositions
+        --ts <- sort `liftM` getTargetPositions
+        --liftIO $ mvWAddStr window 19 0 (show $ length bs)
+        --liftIO $ mvWAddStr window 20 0 (show bs)
+        --liftIO $ mvWAddStr window 21 0 (show $ length ts)
+        --liftIO $ mvWAddStr window 22 0 (show ts)
+        when isFinished (liftIO (wclear window >> printYouWonScreen window))
         liftIO $ refresh
-        -- sokobanInfo <- get
-        -- liftIO $ mvWAddStr window 30 0 (show sokobanInfo)
+        return isFinished
 
   showMoves :: Int -> IO ()
   showMoves s = mvWAddStr stdScr 3 30 ("Number of moves: " ++ show s)
 
   -- keyPressed :: (MonadState SokobanInfo) m => Key -> m ()
-  keyPressed :: Key -> SokobanMonad ()
+  keyPressed :: Key -> SokobanMonad Bool
   keyPressed k = do 
     let t = getTranslation k
     movePlayer t
-    return ()
   
   getTranslation :: Key -> Translation
   getTranslation key | key == KeyUp    || key == (KeyChar 'k') = translateUp
@@ -58,6 +71,7 @@ module HaskBan (main) where
 
   shouldTerminate :: Key -> Bool
   shouldTerminate (KeyChar '\ESC') = True
+  shouldTerminate (KeyChar 'q')    = True 
   shouldTerminate _                = False 
 
   displaySokobanMap :: Window -> SokobanMonad ()

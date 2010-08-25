@@ -7,7 +7,7 @@ module HaskBan.Logic where
   updateList _ _ [] = []
   updateList fn x (y:ys) 
     | x == y = ((fn x):ys)
-    | otherwise = updateList fn x ys
+    | otherwise = (y:updateList fn x ys)
 
   translateUp :: Translation
   translateUp (row, column)    = (row - 1, column)

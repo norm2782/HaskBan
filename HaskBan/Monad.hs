@@ -14,6 +14,7 @@ module HaskBan.Monad where
   import HaskBan.Logic (isBox, updateList, canMoveTo)
   import Control.Monad.State
   import qualified Data.Map as M
+  import Data.List (sort)
   import Data.Map ((!))
 
   newtype SokobanMonad a = SokobanMonad (StateT SokobanInfo IO a)
@@ -25,6 +26,13 @@ module HaskBan.Monad where
   
   -- | Accessors of the SokobanMonad Attributes
   --
+
+  isGameFinished :: (MonadState SokobanInfo) m => m Bool
+  isGameFinished = do
+    bs <- sort `liftM` getBoxesPositions
+    ts <- sort `liftM` getTargetPositions
+    return $ bs == ts
+
   getPlayerPosition :: (MonadState SokobanInfo) m => m Point
   getPlayerPosition = player `liftM` get
   
@@ -33,6 +41,9 @@ module HaskBan.Monad where
 
   updatePlayerPosition :: (MonadState SokobanInfo) m => (Point -> Point) -> m ()
   updatePlayerPosition trans = getPlayerPosition >>= putPlayerPosition . trans
+
+  getTargetPositions :: (MonadState SokobanInfo) m => m [Point]
+  getTargetPositions = targets `liftM` get
 
   getBoxesPositions :: (MonadState SokobanInfo) m => m [Point]
   getBoxesPositions = boxes `liftM` get
@@ -83,23 +94,18 @@ module HaskBan.Monad where
   -- We need to:
   -- 1. Update the SokobanInfo
   -- 2. Update the SokoMap
-  -- movePlayer :: (MonadState SokobanInfo) m => Translation -> m ()
-  movePlayer :: Translation -> SokobanMonad ()
+  -- movePlayer :: Translation -> SokobanMonad ()
+  movePlayer :: (MonadState SokobanInfo) m => Translation -> m Bool
   movePlayer trans = do
     sm   <- getMap
     ppos <- getPlayerPosition
-    -- liftIO $ putStrLn "Hey Joe Joe Joe" 
-    -- liftIO $ putStrLn (show ppos)
-    --liftIO $ mvWAddStr stdScr 20 0 (show ppos)
-    --liftIO $ refresh
     let ppos' = trans ppos
-    -- liftIO $ putStrLn (show ppos')
     when (canMoveTo sm ppos' trans) $ do
-      -- liftIO $ putStrLn "Hey Joe Joe Joe" 
       when (isBox ppos' sm) $ do
         moveBox ppos' trans
       -- we have updated the SokobanInfo
       updateMap (swapCellType ppos ppos')
       updatePlayerPosition trans
+    isGameFinished
       
 
