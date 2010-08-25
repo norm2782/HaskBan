@@ -10,9 +10,14 @@
 --
 --  3) The parsing will conclude when you get to the EOF or when the word END is parsed
 --
-module HaskBan.Parser (parseSokoMaps, runHaskBanParser, validCellMatrix, cellMatrixToSokoMap) where
+module HaskBan.Parser (parseSokoMaps, 
+                       runHaskBanParser, 
+                       validCellMatrix, 
+                       cellMatrixToSokoMap, 
+                       getSokobanInfo) where
 
-  import HaskBan.Types (CellType(..), CellMatrix, SokoMap, SokoMaps)
+  import HaskBan.Types 
+  import qualified HaskBan.Types as HBT
   import Data.ByteString (ByteString)
   import Data.Maybe (catMaybes)
   import Data.List (foldl')
@@ -30,12 +35,12 @@ module HaskBan.Parser (parseSokoMaps, runHaskBanParser, validCellMatrix, cellMat
   -- | Custom Parsers (Parsec) 
   -- 
   pInt = readInt <$> (many digit)
-  pPlayer = Player <$ char '@' 
+  pPlayer = (Path Player) <$ char '@' 
   pWall   = Wall <$ char '#' 
-  pBox    = Box <$ char '$'
-  pPath   = Path <$ char ' '
-  pTarget = Target Nothing <$ char '.'
-  pRockOnTarget = Target (Just Box) <$ char '*' 
+  pBox    = (Path Box) <$ char '$'
+  pPath   = (Path HBT.Empty) <$ char ' '
+  pTarget = (Target HBT.Empty) <$ char '.'
+  pRockOnTarget = (Target Box) <$ char '*' 
 
   pCellType    = choice [pWall, pBox, pPath, pTarget,
                              pPlayer, pRockOnTarget]
@@ -50,6 +55,20 @@ module HaskBan.Parser (parseSokoMaps, runHaskBanParser, validCellMatrix, cellMat
       Left e -> error (show e)
       Right cells -> (catMaybes . map validCellMatrix) cells
 
+  getSokobanInfo :: SokoMap -> SokobanInfo
+  getSokobanInfo sokoMap = sokobanInfo
+    where
+      ~(bs, ts, (Just p)) = M.foldWithKey eachCell ([], [], Nothing) sokoMap
+      eachCell :: Point -> CellType -> ([Point], [Point], Maybe Point) -> ([Point], [Point], Maybe Point)
+      eachCell point cell st@(bs, ts, player) = 
+        case cell of
+          p@(Path Player) -> (bs, ts, Just point)
+          b@(Path Box) -> ((point:bs), ts, player)
+          b@(Target Box) -> ((point:bs), (point:ts), player)
+          t@(Target HBT.Empty) -> (bs, (point:ts), player)
+          _ -> st
+      sokobanInfo = SokobanInfo 0  p bs ts sokoMap
+    
 
   -- | Main Method
   parseSokoMaps :: ByteString -> SokoMaps

@@ -1,35 +1,28 @@
 {-# LANGUAGE NoMonomorphismRestriction, GeneralizedNewtypeDeriving #-}
 module HaskBan.Types where
 
-  import qualified Data.Map as M
-  import Control.Monad (liftM, mapM_)
-  import Control.Monad.State as MS
   import Data.IntMap (IntMap)
   import Data.Map (Map)
 
+  data InnerCell = Player
+                 | Box
+                 | Empty
+                 deriving (Eq)
+  
   data CellType = Wall
-                | Player
-                | Box
-                | Path
-                | Target (Maybe CellType) -- target could have a box on the initial state
-                | Empty -- for spaces that don't mean anything on the map (see input)
-                deriving (Eq, Ord)
+                | Path { inner :: InnerCell }
+                | Target { inner :: InnerCell }
+                deriving (Eq)
 
   instance Show CellType where
     show Wall   = "#"
-    show Player = "P"
-    show Box    = "$"
-    show Path   = " "
-    show (Target (Nothing)) = "."
-    show (Target (Just _))  = "*"
-    show Empty  = " "
+    show (Path Player) = "P"
+    show (Path Box) = "$"
+    show (Path Empty) = " "
+    show (Target Empty) = "."
+    show (Target Player) = "P"
+    show (Target Box) = "*"
 
-  data Surrounding = Left CellType
-                   | Right CellType
-                   | Up CellType
-                   | Down CellType
-                   deriving (Show, Eq, Ord)
-  
   type CellMatrix = [[CellType]]
 
   type Point = (Int, Int)
@@ -45,9 +38,5 @@ module HaskBan.Types where
     sokoMap :: SokoMap
   } deriving (Show)
 
-  newtype SokobanMonad a = SokobanMonad (MS.StateT SokobanInfo IO a)
-                           deriving (Monad, MonadIO, MonadState SokobanInfo)
 
-  runSokobanMonad :: SokobanMonad a -> SokobanInfo -> IO (a, SokobanInfo)
-  runSokobanMonad (SokobanMonad stateT) initialState = runStateT stateT initialState
 
