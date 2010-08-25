@@ -10,16 +10,16 @@ module HaskBan.Logic where
     | otherwise = updateList fn x ys
 
   translateUp :: Translation
-  translateUp (x, y)    = (x, y - 1)
+  translateUp (row, column)    = (row - 1, column)
 
   translateDown :: Translation
-  translateDown (x, y)  = (x, y + 1)
+  translateDown (row, column)  = (row + 1, column)
 
   translateLeft :: Translation
-  translateLeft (x, y)  = (x - 1, y)
+  translateLeft (row, column)  = (row, column - 1)
 
   translateRight :: Translation
-  translateRight (x, y) = (x + 1, y)
+  translateRight (row, column) = (row, column + 1)
   
   isWall :: Point -> SokoMap -> Bool
   isWall = isCellType Wall
@@ -38,7 +38,7 @@ module HaskBan.Logic where
   -- In case the new pointis a box, the next position needs to be
   -- checked as well. Hence, the original translation function is provided as well.
   canMoveTo :: SokoMap -> Point -> Translation -> Bool
-  canMoveTo sMap point transl = (isPath point sMap) -- || 
-                                -- (isBox  point sMap && not (isWall (transl point) sMap)) 
+  canMoveTo sMap point transl = (isPath point sMap) || 
+                                (isBox  point sMap && not (isWall (transl point) sMap)) 
 
 

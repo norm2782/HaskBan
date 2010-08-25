@@ -54,6 +54,7 @@ module HaskBan (main) where
                      | key == KeyDown  || key == (KeyChar 'j') = translateDown
                      | key == KeyLeft  || key == (KeyChar 'h') = translateLeft
                      | key == KeyRight || key == (KeyChar 'l') = translateRight
+                     | otherwise                               = (\(x, y) -> (x, y))
 
   shouldTerminate :: Key -> Bool
   shouldTerminate (KeyChar '\ESC') = True
