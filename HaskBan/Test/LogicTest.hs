@@ -8,7 +8,7 @@ module HaskBan.Test.LogicTest where
   import HaskBan.Logic
   import HaskBan.Types
 
-  getSokoMap = (cellMatrixToSokoMap . head . runHaskBanParser) `liftM` (fixture "SokoMapCreationFixture.txt")
+  getSokoMap = (cellMatrixToSokoMap . head . runHaskBanParser) `liftM` (fixture "SokoMapLogicFixture.txt")
 
   testIsPathWorks = TestCase (do
     sokoMap <- getSokoMap
