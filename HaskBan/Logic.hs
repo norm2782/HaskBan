@@ -31,6 +31,10 @@ module HaskBan.Logic where
   isPath :: Point -> SokoMap -> Bool
   isPath = isCellType (Path Empty)
 
+  isTarget :: Point -> SokoMap -> Bool
+  isTarget p sm = isCellType (Target Box) p sm ||
+                  isCellType (Target Empty) p sm 
+
   isCellType :: CellType -> Point -> SokoMap -> Bool
   isCellType cType point sMap = (sMap ! point) == cType
 
@@ -38,9 +42,10 @@ module HaskBan.Logic where
   -- In case the new pointis a box, the next position needs to be
   -- checked as well. Hence, the original translation function is provided as well.
   canMoveTo :: SokoMap -> Point -> Translation -> Bool
-  canMoveTo sMap point transl = (isPath point sMap) || 
-                                (isBox  point sMap && not (isWall trPt sMap)
-                                                   && not (isBox  trPt sMap))
+  canMoveTo sMap point transl = (isPath   point sMap) ||
+                                (isTarget point sMap) ||
+                                (isBox    point sMap  && not (isWall trPt sMap)
+                                                      && not (isBox  trPt sMap))
                                 where trPt = transl point
 
 
