@@ -116,8 +116,10 @@ module HaskBan (main) where
   -- checked as well. Hence, the original translation function is provided as well.
   canMoveTo :: SokoMap -> Point -> Translation -> Bool
   canMoveTo sMap point transl | isPath point sMap = True
-                              | isBox  point sMap && not (isWall (transl point) sMap) = True
+                              | isBox  point sMap && not (isWall trP sMap)
+                                                  && not (isBox  trP sMap) = True
                               | otherwise  = False
+                              where trP = transl point
 
   shouldTerminate :: Key -> Bool
   shouldTerminate (KeyChar '\ESC') = True
