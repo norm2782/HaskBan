@@ -3,7 +3,7 @@ module HaskBan.Test.ParserTest where
   import Test.HUnit
   import qualified Data.Map as M
   import Control.Monad (liftM)
-  import HaskBan.Types (CellType(..))
+  import HaskBan.Types (CellType(..), InnerCell(..))
   import HaskBan.Parser (runHaskBanParser, validCellMatrix, cellMatrixToSokoMap)
   import HaskBan.Test.TestHelper (fixture) 
 
@@ -36,7 +36,7 @@ module HaskBan.Test.ParserTest where
     let sokoMap = cellMatrixToSokoMap cellMatrix
     -- (4, 7) should be the player
     case M.lookup (4, 7) sokoMap of
-      (Just Player) -> assertBool "The player is on the right position" True
+      (Path Player) -> assertBool "The player is on the right position" True
       x -> putStrLn "" >> putStrLn (show x) >> putStrLn "" >> assertBool "Player not Matching" False
     )
     
