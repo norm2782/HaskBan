@@ -10,6 +10,14 @@ module HaskBan.Test.LogicTest where
 
   getSokoMap = (cellMatrixToSokoMap . head . runHaskBanParser) `liftM` (fixture "SokoMapLogicFixture.txt")
 
+  testIsBoxWorks = TestCase (do
+    sokoMap <- getSokoMap
+    let plainBox  = isBox (3, 3) sokoMap
+    let targetBox = isBox (1, 1) sokoMap
+    assertBool "isBox works for box on path" plainBox
+    assertBool "isBox works for box on target" targetBox
+    )
+
   testIsPathWorks = TestCase (do
     sokoMap <- getSokoMap
     putStrLn (show sokoMap)
@@ -51,7 +59,8 @@ module HaskBan.Test.LogicTest where
     assertBool "User Player can move to a box that is followed by a box" (not playerCanMove)
     )
 
-  haskBanLogicTestSuite = TestList [testIsPathWorks,
+  haskBanLogicTestSuite = TestList [testIsBoxWorks,
+                                    testIsPathWorks,
                                     testIsWallWorks,
                                     testCanMoveToWorksOnEmptyPaths,
                                     testCanMoveToWorksWithValidBox,
