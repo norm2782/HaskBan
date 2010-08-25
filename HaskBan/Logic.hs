@@ -38,7 +38,7 @@ module HaskBan.Logic where
   -- In case the new pointis a box, the next position needs to be
   -- checked as well. Hence, the original translation function is provided as well.
   canMoveTo :: SokoMap -> Point -> Translation -> Bool
-  canMoveTo sMap point transl = (isPath point sMap) -- || 
-                                -- (isBox  point sMap && not (isWall (transl point) sMap)) 
+  canMoveTo sMap point transl = (isPath point sMap) || 
+                                (isBox  point sMap && not (isWall (transl point) sMap)) 
 
 

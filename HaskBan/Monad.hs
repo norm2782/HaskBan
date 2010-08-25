@@ -86,7 +86,7 @@ module HaskBan.Monad where
   -- movePlayer :: (MonadState SokobanInfo) m => Translation -> m ()
   movePlayer :: Translation -> SokobanMonad ()
   movePlayer trans = do
-    sm <- getMap
+    sm   <- getMap
     ppos <- getPlayerPosition
     -- liftIO $ putStrLn "Hey Joe Joe Joe" 
     -- liftIO $ putStrLn (show ppos)
@@ -94,8 +94,7 @@ module HaskBan.Monad where
     --liftIO $ refresh
     let ppos' = trans ppos
     -- liftIO $ putStrLn (show ppos')
---    when (canMoveTo sm ppos trans) $ do
-    when True $ do
+    when (canMoveTo sm ppos' trans) $ do
       -- liftIO $ putStrLn "Hey Joe Joe Joe" 
       when (isBox ppos' sm) $ do
         moveBox ppos' trans
