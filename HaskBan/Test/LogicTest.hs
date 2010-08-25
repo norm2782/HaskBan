@@ -13,29 +13,34 @@ module HaskBan.Test.LogicTest where
   --  let works = isPath  
   --  )
 
+ -- testIsWallWorks = TestCase (do
+  --  sokoMap <
+
   testCanMoveToWorksOnEmptyPaths = TestCase (do
-    sokoMap <- (cellMatrixToSokoMap . head . runHaskBanParser) `liftM` (fixture "SokoMapCreationFixture.txt")
+    sokoMap <- getSokoMap
     let playerCanMove = canMoveTo sokoMap (4,5) translateUp
     assertBool "User Player should move to an empty cell" playerCanMove
     )
   
   testCanMoveToWorksWithValidBox = TestCase (do
-    sokoMap <- (cellMatrixToSokoMap . head . runHaskBanParser) `liftM` (fixture "SokoMapCreationFixture.txt")
+    sokoMap <- getSokoMap
     let playerCanMove = canMoveTo sokoMap (4,5)  translateDown
     assertBool "User Player can move to a box that is followed by an empty space" playerCanMove
     )
 
   testCanMoveToFailsWithBoxFollowedByWall = TestCase (do
-    sokoMap <- (cellMatrixToSokoMap . head . runHaskBanParser) `liftM` (fixture "SokoMapCreationFixture.txt")
+    sokoMap <- getSokoMap
     let playerCanMove = canMoveTo sokoMap (4, 6) translateRight
     assertBool "User Player can move to a box that is followed by a wall" (not playerCanMove)
     )
 
   testCanMoveToFailsWithBoxFollowedByBox = TestCase (do
-    sokoMap <- (cellMatrixToSokoMap . head . runHaskBanParser) `liftM` (fixture "SokoMapCreationFixture.txt")
+    sokoMap <- getSokoMap
     let playerCanMove = canMoveTo sokoMap (4, 6) translateUp
     assertBool "User Player can move to a box that is followed by a box" (not playerCanMove)
     )
+
+  getSokoMap = (cellMatrixToSokoMap . head . runHaskBanParser) `liftM` (fixture "SokoMapCreationFixture.txt")
 
   haskBanLogicTestSuite = TestList [testCanMoveToWorksOnEmptyPaths,
                                     testCanMoveToWorksWithValidBox,
