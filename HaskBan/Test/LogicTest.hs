@@ -8,8 +8,10 @@ module HaskBan.Test.LogicTest where
   import HaskBan.Logic
   import HaskBan.Types
 
+  getSokoMap = (cellMatrixToSokoMap . head . runHaskBanParser) `liftM` (fixture "SokoMapCreationFixture.txt")
+
   testIsPathWorks = TestCase (do
-    sokoMap <- (cellMatrixToSokoMap . head . runHaskBanParser) `liftM` (fixture "SokoMapLogicFixture.txt")
+    sokoMap <- getSokoMap
     putStrLn (show sokoMap)
     let worksOnPath = isPath (3, 5) sokoMap
     let failsOnWall = isPath (3, 8) sokoMap
@@ -19,29 +21,31 @@ module HaskBan.Test.LogicTest where
     assertBool "isPath fails on box" (not failsOnBox)
     )
 
+
   testCanMoveToWorksOnEmptyPaths = TestCase (do
-    sokoMap <- (cellMatrixToSokoMap . head . runHaskBanParser) `liftM` (fixture "SokoMapLogicFixture.txt")
+    sokoMap <- getSokoMap
     let playerCanMove = canMoveTo sokoMap (3,5) translateUp
     assertBool "User Player can move to an empty cell" playerCanMove
     )
   
   testCanMoveToWorksWithValidBox = TestCase (do
-    sokoMap <- (cellMatrixToSokoMap . head . runHaskBanParser) `liftM` (fixture "SokoMapLogicFixture.txt")
+    sokoMap <- getSokoMap
     let playerCanMove = canMoveTo sokoMap (3,4)  translateUp
     assertBool "User Player can move to a box that is followed by an empty space" playerCanMove
     )
 
   testCanMoveToFailsWithBoxFollowedByWall = TestCase (do
-    sokoMap <- (cellMatrixToSokoMap . head . runHaskBanParser) `liftM` (fixture "SokoMapLogicFixture.txt")
+    sokoMap <- getSokoMap
     let playerCanMove = canMoveTo sokoMap (4, 6) translateRight
     assertBool "User Player can move to a box that is followed by a wall" (not playerCanMove)
     )
 
   testCanMoveToFailsWithBoxFollowedByBox = TestCase (do
-    sokoMap <- (cellMatrixToSokoMap . head . runHaskBanParser) `liftM` (fixture "SokoMapLogicFixture.txt")
+    sokoMap <- getSokoMap
     let playerCanMove = canMoveTo sokoMap (4, 6) translateUp
     assertBool "User Player can move to a box that is followed by a box" (not playerCanMove)
     )
+
 
   haskBanLogicTestSuite = TestList [testIsPathWorks,
                                     testCanMoveToWorksOnEmptyPaths,

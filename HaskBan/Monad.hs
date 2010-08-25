@@ -55,18 +55,17 @@ module HaskBan.Monad where
   swapCellType :: Point -> Point -> SokoMap -> SokoMap
   swapCellType p1 p2 sm = sm''
     where
-      ic1 = inner (sm ! p1)
-      ic2 = inner (sm ! p2)
-      sm' = updateCellType sm p1 ic2
+      ic1  = inner (sm ! p1)
+      ic2  = inner (sm ! p2)
+      sm'  = updateCellType sm p1 ic2
       sm'' = updateCellType sm' p2 ic1
       
-
   -- | Helper methods to update the state inside the monad
   --
   updateCellType :: SokoMap -> Point -> InnerCell -> SokoMap
   updateCellType sm p innerCell = M.update updateInnerCell p sm
     where
-      updateInnerCell (Path _) = Just $ Path innerCell
+      updateInnerCell (Path _)   = Just $ Path innerCell
       updateInnerCell (Target _) = Just $ Target innerCell
 
   -- | We are going to swap the current position (where the box is) 
@@ -77,7 +76,6 @@ module HaskBan.Monad where
     let p' = trans p
     updateMap (swapCellType p p')
     updateBoxPosition trans p
-    
 
   -- | SokobanMonad action that cheks the current state and moves
   -- the player internally on the monad

@@ -14,7 +14,7 @@ module HaskBan.Printer (showSokoMap) where
       cellFn p = 
         case (M.lookup p sokoMap) of
           Just cell -> show cell
-          Nothing -> ""
+          Nothing   -> ""
 
   sokoMapKeysMatrix :: SokoMap -> [[Point]]
   sokoMapKeysMatrix sokoMap = snd (foldl' helper (0, [[]]) (M.keys sokoMap))
@@ -22,7 +22,7 @@ module HaskBan.Printer (showSokoMap) where
       helper :: (Int, [[Point]]) -> Point -> (Int, [[Point]])
       helper (i, list@(l:ls)) k 
         | (fst k) == i = (i, ((k:l):ls))
-        | otherwise = (i + 1, ([k]:list))
+        | otherwise    = (i + 1, ([k]:list))
       
   
   showCellMatrix :: CellMatrix -> String
