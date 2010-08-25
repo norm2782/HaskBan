@@ -67,6 +67,7 @@ module HaskBan.Monad where
     where
       updateInnerCell (Path _)   = Just $ Path innerCell
       updateInnerCell (Target _) = Just $ Target innerCell
+      updateInnerCell Wall       = Just $ Wall
 
   -- | We are going to swap the current position (where the box is) 
   -- with the position given after the translation
