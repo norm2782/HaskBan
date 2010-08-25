@@ -67,8 +67,7 @@ module HaskBan.Parser (parseSokoMaps,
           b@(Target Box)  -> ((point:bs), (point:ts), player)
           t@(Target HBT.Empty) -> (bs, (point:ts), player)
           _ -> st
-      sokobanInfo = SokobanInfo 0  p bs ts sokoMap
-    
+      sokobanInfo = SokobanInfo 0 0 p bs ts sokoMap
 
   -- | Main Method
   parseSokoMaps :: ByteString -> SokoMaps

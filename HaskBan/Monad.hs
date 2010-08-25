@@ -34,6 +34,15 @@ module HaskBan.Monad where
   updatePlayerPosition :: (MonadState SokobanInfo) m => (Point -> Point) -> m ()
   updatePlayerPosition trans = getPlayerPosition >>= putPlayerPosition . trans
 
+  getNumberOfSteps :: (MonadState SokobanInfo) m => m Int
+  getNumberOfSteps = numSteps `liftM` get
+
+  putNumberOfSteps :: (MonadState SokobanInfo) m => Int -> m ()
+  putNumberOfSteps steps = get >>= \state -> put (state { numSteps = steps })
+
+  incrNumberOfSteps :: (MonadState SokobanInfo) m => m ()
+  incrNumberOfSteps = getNumberOfSteps >>= putNumberOfSteps . (+1)
+
   getBoxesPositions :: (MonadState SokobanInfo) m => m [Point]
   getBoxesPositions = boxes `liftM` get
 
@@ -95,6 +104,7 @@ module HaskBan.Monad where
     let ppos' = trans ppos
     -- liftIO $ putStrLn (show ppos')
     when (canMoveTo sm ppos' trans) $ do
+      incrNumberOfSteps
       -- liftIO $ putStrLn "Hey Joe Joe Joe" 
       when (isBox ppos' sm) $ do
         moveBox ppos' trans

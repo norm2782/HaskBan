@@ -31,11 +31,12 @@ module HaskBan.Types where
   type SokoMaps    = IntMap SokoMap
 
   data SokobanInfo = SokobanInfo {
+    numSteps     :: Int,
     currentLevel :: Int,
-    player  :: Point,
-    boxes   :: [Point],
-    targets :: [Point],
-    sokoMap :: SokoMap
+    player       :: Point,
+    boxes        :: [Point],
+    targets      :: [Point],
+    sokoMap      :: SokoMap
   } deriving (Show)
 
 
