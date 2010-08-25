@@ -25,14 +25,14 @@ module HaskBan.Logic where
   isWall = isCellType Wall
 
   isBox :: Point -> SokoMap -> Bool
-  isBox p sm = (isCellType (Path Box) p sm) ||
+  isBox p sm = (isCellType (Path Box)   p sm) ||
                (isCellType (Target Box) p sm)
 
   isPath :: Point -> SokoMap -> Bool
   isPath = isCellType (Path Empty)
 
   isTarget :: Point -> SokoMap -> Bool
-  isTarget p sm = isCellType (Target Box) p sm ||
+  isTarget p sm = isCellType (Target Box)   p sm ||
                   isCellType (Target Empty) p sm 
 
   isCellType :: CellType -> Point -> SokoMap -> Bool
