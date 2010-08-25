@@ -42,12 +42,12 @@ module HaskBan.Parser (parseSokoMaps,
   pTarget = (Target HBT.Empty) <$ char '.'
   pRockOnTarget = (Target Box) <$ char '*' 
 
-  pCellType    = choice [pWall, pBox, pPath, pTarget,
+  pCellType     = choice [pWall, pBox, pPath, pTarget,
                              pPlayer, pRockOnTarget]
-  pCellTypeRow = many1 pCellType <* char '\n'
-  pCellMatrix  = string "Level" *> spaces *> pInt *> spaces *> (many pCellTypeRow) <* spaces
-  pEndSection  = string "END"
-  pHaskBan     = (many pCellMatrix) <* optional pEndSection
+  pCellTypeRow  = many1 pCellType <* char '\n'
+  pCellMatrix   = string "Level" *> spaces *> pInt *> spaces *> (many pCellTypeRow) <* spaces
+  pEndSection   = string "END"
+  pHaskBan      = (many pCellMatrix) <* optional pEndSection
 
   runHaskBanParser :: ByteString -> [CellMatrix]
   runHaskBanParser input = 
@@ -63,8 +63,8 @@ module HaskBan.Parser (parseSokoMaps,
       eachCell point cell st@(bs, ts, player) = 
         case cell of
           p@(Path Player) -> (bs, ts, Just point)
-          b@(Path Box) -> ((point:bs), ts, player)
-          b@(Target Box) -> ((point:bs), (point:ts), player)
+          b@(Path Box)    -> ((point:bs), ts, player)
+          b@(Target Box)  -> ((point:bs), (point:ts), player)
           t@(Target HBT.Empty) -> (bs, (point:ts), player)
           _ -> st
       sokobanInfo = SokobanInfo 0  p bs ts sokoMap

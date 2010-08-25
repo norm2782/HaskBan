@@ -54,8 +54,6 @@ module HaskBan (main) where
                      | key == KeyDown  || key == (KeyChar 'j') = translateDown
                      | key == KeyLeft  || key == (KeyChar 'h') = translateLeft
                      | key == KeyRight || key == (KeyChar 'l') = translateRight
-  
-
 
   shouldTerminate :: Key -> Bool
   shouldTerminate (KeyChar '\ESC') = True
@@ -68,6 +66,3 @@ module HaskBan (main) where
       let sokoMapStr = showSokoMap sokobanMap
       mvWAddStr window 2 0 sokoMapStr 
       refresh
-      
-
-
