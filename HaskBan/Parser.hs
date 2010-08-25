@@ -29,11 +29,11 @@ module HaskBan.Parser (parseSokoMaps, runHaskBanParser, validCellMatrix, cellMat
 
   -- | Custom Parsers (Parsec) 
   -- 
-  pInt = readInt <$> (many digit)
-  pPlayer = Player <$ char '@' 
-  pWall   = Wall <$ char '#' 
-  pBox    = Box <$ char '$'
-  pPath   = Path <$ char ' '
+  pInt    = readInt <$> (many digit)
+  pPlayer = Player  <$  char '@' 
+  pWall   = Wall    <$  char '#' 
+  pBox    = Box     <$  char '$'
+  pPath   = Path    <$  char ' '
   pTarget = Target Nothing <$ char '.'
   pRockOnTarget = Target (Just Box) <$ char '*' 
 
