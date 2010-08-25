@@ -60,10 +60,10 @@ module HaskBan (main) where
                       else return ()
   
   getTranslation :: Key -> Translation
-  getTranslation k | k == KeyUp    || k == (KeyChar 'k') = translateUp
-                   | k == KeyDown  || k == (KeyChar 'j') = translateDown
-                   | k == KeyLeft  || k == (KeyChar 'h') = translateLeft
-                   | k == KeyRight || k == (KeyChar 'l') = translateRight
+  getTranslation key | key == KeyUp    || key == (KeyChar 'k') = translateUp
+                     | key == KeyDown  || key == (KeyChar 'j') = translateDown
+                     | key == KeyLeft  || key == (KeyChar 'h') = translateLeft
+                     | key == KeyRight || key == (KeyChar 'l') = translateRight
   
   translateUp :: Translation
   translateUp (x, y)    = (x, y - 1)
@@ -87,10 +87,10 @@ module HaskBan (main) where
   isPath = isCellType Path
 
   isCellType :: CellType -> Point -> SokoMap -> Bool
-  isCellType c p m = getCellType p m == c
+  isCellType cType point sMap = getCellType point sMap == cType
 
   getCellType :: Point -> SokoMap -> CellType
-  getCellType p m = m ! p
+  getCellType point sMap = sMap ! point
 
   getPlayerPosition :: (MonadState SokobanInfo) m => m Point
   getPlayerPosition = player `liftM` get
@@ -115,9 +115,9 @@ module HaskBan (main) where
   -- In case the new pointis a box, the next position needs to be
   -- checked as well. Hence, the original translation function is provided as well.
   canMoveTo :: SokoMap -> Point -> Translation -> Bool
-  canMoveTo g p t | isPath p g = True
-                  | isBox p g && not (isWall (t p) g) = True
-                  | otherwise  = False
+  canMoveTo sMap point transl | isPath point sMap = True
+                              | isBox  point sMap && not (isWall (transl point) sMap) = True
+                              | otherwise  = False
 
   shouldTerminate :: Key -> Bool
   shouldTerminate (KeyChar '\ESC') = True
