@@ -6,7 +6,7 @@ Synopsis:       Sokoban game
 Build-Type:     Simple
 
 Executable haskban
-  Build-Depends:  base, parsec, containers, bytestring, mtl
+  Build-Depends:  base, parsec >= 3, containers, bytestring, mtl, hscurses
   Main-Is:        Main.hs
   Hs-Source-Dirs: .
 
