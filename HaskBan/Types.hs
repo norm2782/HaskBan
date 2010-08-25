@@ -1,5 +1,6 @@
 {-# LANGUAGE NoMonomorphismRestriction, GeneralizedNewtypeDeriving #-}
 module HaskBan.Types where
+
   import qualified Data.Map as M
   import Control.Monad (liftM, mapM_)
   import Control.Monad.State as MS
@@ -16,7 +17,7 @@ module HaskBan.Types where
 
   instance Show CellType where
     show Wall   = "#"
-    show Player = "λ"
+    show Player = "P"
     show Box    = "$"
     show Path   = " "
     show (Target (Nothing)) = "."
@@ -36,7 +37,7 @@ module HaskBan.Types where
   type SokoMap = Map Point CellType
   type SokoMaps = IntMap SokoMap
 
-  data SokobanStateInfo = SokobanStateInfo {
+  data SokobanInfo = SokobanInfo {
     currentLevel :: Int,
     player  :: Point,
     boxes   :: [Point],
@@ -44,6 +45,9 @@ module HaskBan.Types where
     sokoMap :: SokoMap
   } deriving (Show)
 
-  -- QUESTION: on it's own Module?
-  newtype SokobanState a = SokobanState (MS.State SokobanStateInfo a)
-                           deriving (Monad, MonadState SokobanStateInfo)
+  newtype SokobanMonad a = SokobanMonad (MS.StateT SokobanInfo IO a)
+                           deriving (Monad, MonadIO, MonadState SokobanInfo)
+
+  runSokobanMonad :: SokobanMonad a -> SokobanInfo -> IO (a, SokobanInfo)
+  runSokobanMonad (SokobanMonad stateT) initialState = runStateT stateT initialState
+

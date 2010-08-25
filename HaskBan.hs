@@ -1,39 +1,54 @@
-{-# LANGUAGE NoMonomorphismRestriction, GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE NoMonomorphismRestriction, GeneralizedNewtypeDeriving, FlexibleContexts #-}
 module HaskBan (main) where
-  
+
+  -- ncurses (gui) library
   import UI.HSCurses.Curses
-  import HaskBan.Types
+  import HaskBan.Curses
+  
+  -- haskban internals
+  import HaskBan.Types 
   import HaskBan.Parser (parseSokoMaps)
   import HaskBan.Printer 
-  import Control.Monad (mapM_, liftM)
+
+  -- others
+  import Control.Monad (mapM_, liftM, forever)
   import Control.Monad.State
   import qualified Data.ByteString as BS
+  import qualified Data.IntMap as IM ((!))
   import Data.Map ((!), Map)
   
-  main :: IO ()
-  main = do 
-    contents <- BS.readFile "input.in" 
-    initCurses
-    echo False
-    keypad stdScr True
-    cursSet CursorInvisible
-    mvWAddStr stdScr 0 0 "Welcome to HaskBan, the world's most awesome Haskell-based Sokoban game."
+  main :: SokobanMonad ()
+  main = liftIO $ do
+    window <- setupHaskBanGUI 
+    -- mvWAddStr window 2 0 (showSokoMap (sokoMaps IM.! 0))
+    --cursSet CursorInvisible
     showMoves 0
     refresh
-    progLoop
+    forever (readKeyAndPrint window)
+    
+    -- progLoop
+
+  readKeyAndPrint :: Window -> IO ()
+  readKeyAndPrint window = liftIO $ do
+    key <- getCh
+    if shouldTerminate key
+      then endWin
+      else do
+        wMove window 20 0
+        wAddStr window (show key)
 
   showMoves :: Int -> IO ()
   showMoves s = mvWAddStr stdScr 3 30 ("Number of moves: " ++ show s)
 
-  progLoop :: IO ()
-  progLoop = do --mvWAddStr stdScr 1 0 (showSokoMap (return getMap))
-                key <- getCh
-                if shouldTerminate key
-                  then do endWin
-                  else do return (keyPressed key)
-                          progLoop
+  --progLoop :: IO ()
+  --progLoop = do --mvWAddStr stdScr 1 0 (showSokoMap (return getMap))
+  --              key <- getCh
+  --              if shouldTerminate key
+  --                then do endWin
+  --                else do return (keyPressed key)
+  --                        progLoop
 
-  keyPressed :: Key -> SokobanState()
+  keyPressed :: (MonadState SokobanInfo) m => Key -> m ()
   keyPressed k = do map <- getMap
                     pos <- getPlayerPosition
                     let t = getTranslation k
@@ -77,23 +92,23 @@ module HaskBan (main) where
   getCellType :: Point -> SokoMap -> CellType
   getCellType p m = m ! p
 
-  getPlayerPosition :: SokobanState Point
+  getPlayerPosition :: (MonadState SokobanInfo) m => m Point
   getPlayerPosition = player `liftM` get
 
-  putPlayerPosition :: Point -> SokobanState ()
+  putPlayerPosition :: (MonadState SokobanInfo) m => Point -> m ()
   putPlayerPosition position = get >>= \state -> put (state {player = position})
 
-  getMap :: SokobanState SokoMap
+  getMap :: (MonadState SokobanInfo) m => m SokoMap
   getMap = sokoMap `liftM` get 
 
-  putMap :: SokoMap -> SokobanState ()
+  putMap :: (MonadState SokobanInfo) m => SokoMap -> m ()
   putMap map = get >>= \state -> put (state {sokoMap = map})
 
-  movePlayer :: SokoMap -> Translation -> SokobanState ()
+  movePlayer :: (MonadState SokobanInfo) m => SokoMap -> Translation -> m ()
   movePlayer g t = liftM t getPlayerPosition >>= \position ->
                    when (canMoveTo g position t) (putPlayerPosition position)
 
-  moveBox :: SokoMap -> Point -> Translation -> SokobanState()
+  moveBox :: (MonadState SokobanInfo) m => SokoMap -> Point -> Translation -> m ()
   moveBox = undefined
 
   -- Verify if the player can move to the point that is provided.
@@ -107,3 +122,4 @@ module HaskBan (main) where
   shouldTerminate :: Key -> Bool
   shouldTerminate (KeyChar '\ESC') = True
   shouldTerminate _                = False 
+
