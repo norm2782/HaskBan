@@ -1,0 +1,1 @@
+rm *.o HaskBan/*.o *.hi HaskBan/*.hi Main
