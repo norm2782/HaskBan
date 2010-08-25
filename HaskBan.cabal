@@ -1,0 +1,12 @@
+Name:           HaskBan
+Version:        0.1
+Cabal-Version:  >= 1.2
+Author:         Román González, Jurriën Stutterheim
+Synopsis:       Sokoban game
+Build-Type:     Simple
+
+Executable haskban
+  Build-Depends:  base, parsec, containers, bytestring, mtl
+  Main-Is:        Main.hs
+  Hs-Source-Dirs: .
+
