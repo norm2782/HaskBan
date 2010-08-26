@@ -48,7 +48,7 @@ module HaskBan.Test.LogicTest where
 
   testCanMoveToFailsWithBoxFollowedByWall = TestCase (do
     sokoMap <- getSokoMap
-    let playerCanMove = canMoveTo sokoMap (4, 6) translateRight
+    let playerCanMove = canMoveTo sokoMap (5,1) translateLeft
     assertBool "User Player can move to a box that is followed by a wall" (not playerCanMove)
     )
 
@@ -58,10 +58,18 @@ module HaskBan.Test.LogicTest where
     assertBool "User Player can move to a box that is followed by a box" (not playerCanMove)
     )
 
+  testCanMoveToFailsWithBoxFollowedByTwoBoxes = TestCase (do
+    sokoMap <- getSokoMap
+    let playerCanMove = canMoveTo sokoMap (5, 1) translateDown
+    assertBool "User Player can move to a box that is followed by 2 boxes" (not playerCanMove)
+    )
+
   haskBanLogicTestSuite = TestList [testIsBoxWorks,
                                     testIsPathWorks,
                                     testIsWallWorks,
                                     testCanMoveToWorksOnEmptyPaths,
                                     testCanMoveToWorksWithValidBox,
                                     testCanMoveToFailsWithBoxFollowedByWall,
-                                    testCanMoveToFailsWithBoxFollowedByBox]
+                                    testCanMoveToFailsWithBoxFollowedByBox,
+                                    testCanMoveToFailsWithBoxFollowedByTwoBoxes]
+

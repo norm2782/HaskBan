@@ -42,10 +42,53 @@ module HaskBan.Logic where
   -- In case the new pointis a box, the next position needs to be
   -- checked as well. Hence, the original translation function is provided as well.
   canMoveTo :: SokoMap -> Point -> Translation -> Bool
-  canMoveTo sMap point transl = (isPath   point sMap) ||
-                                (isTarget point sMap) ||
-                                (isBox    point sMap  && not (isWall trPt sMap)
-                                                      && not (isBox  trPt sMap))
-                                where trPt = transl point
+  canMoveTo sMap point transl = 
+    let
+      point'  = transl point
+      ct  = (sMap ! point)
+      ct' = (sMap ! point')
+    in
+      checkCellTypesToMove sMap point' transl ct ct'
+                               
+                              
+                             
+                            
 
+  checkCellTypesToMove :: SokoMap -> Point -> Translation -> CellType -> CellType -> Bool
+  -- anything that goes to a wall is just False
+  checkCellTypesToMove _ _ _ _ Wall = False
+  --
+  checkCellTypesToMove _ _ _ (Path Empty)  (Path Empty) = True
+  checkCellTypesToMove _ _ _ (Target Empty) (Target Empty) = True
+  checkCellTypesToMove _ _ _ (Target Empty) (Path Empty) = True
+  checkCellTypesToMove _ _ _ (Path Empty) (Target Empty) = True
+  -- player to empty is true in any cell type
+  checkCellTypesToMove _ _ _ (Path Player)  (Path Empty) = True
+  checkCellTypesToMove _ _ _ (Target Player) (Target Empty) = True
+  checkCellTypesToMove _ _ _ (Target Player) (Path Empty) = True
+  checkCellTypesToMove _ _ _ (Path Player) (Target Empty) = True
+  -- box to empty is true in any cell type
+  checkCellTypesToMove _ _ _ (Path Box)  (Path Empty) = True
+  checkCellTypesToMove _ _ _ (Target Box) (Target Empty) = True
+  checkCellTypesToMove _ _ _ (Target Box) (Path Empty) = True
+  checkCellTypesToMove _ _ _ (Path Box) (Target Empty) = True
+  -- box to box is false in any cell type
+  checkCellTypesToMove _ _ _ (Path Box)  (Path Box) = False
+  checkCellTypesToMove _ _ _ (Target Box) (Target Box) = False
+  checkCellTypesToMove _ _ _ (Target Box) (Path Box) = False
+  checkCellTypesToMove _ _ _ (Path Box) (Target Box) = False
+  -- person to box need to have some checkings recursively
+  checkCellTypesToMove sm p trans (Path Player) (Target Box) = checkCellTypesToMoveHelper sm p trans
+  checkCellTypesToMove sm p trans (Target Player) (Path Box) = checkCellTypesToMoveHelper sm p trans
+  checkCellTypesToMove sm p trans (Target Player) (Target Box) = checkCellTypesToMoveHelper sm p trans
+  checkCellTypesToMove sm p trans (Path Player) (Path Box) = checkCellTypesToMoveHelper sm p trans
+
+  checkCellTypesToMoveHelper sm p trans = 
+    let
+      p'  = trans p
+      ct  = (sm ! p)
+      ct' = (sm ! p')
+    in  
+      checkCellTypesToMove sm p' trans ct ct' 
+  
 

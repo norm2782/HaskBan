@@ -5,9 +5,9 @@ module Main where
   import HaskBan.Test.MonadTest
   import HaskBan.Test.ParserTest
   
-  allSuite = TestList [haskBanLogicTestSuite, 
-                       haskBanMonadTestSuite, 
-                       haskBanParserTestSuite]
+  allSuite = TestList [TestLabel "LogicTestSuite" haskBanLogicTestSuite, 
+                       TestLabel "MonadTestSuite" haskBanMonadTestSuite, 
+                       TestLabel "ParserTestSuite" haskBanParserTestSuite]
 
   main :: IO ()
   main = do 

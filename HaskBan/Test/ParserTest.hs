@@ -9,14 +9,6 @@ module HaskBan.Test.ParserTest where
 
   -- | test methods
   --
-  testCellMatrixIsInvalidWhenRowsHaveDifferentLength = TestCase (do
-    -- In the fixture, matrix #2 is invalid
-    cellMatrixes <- getCellMatrixFixture
-    let cellMatrix = cellMatrixes !! 1
-    let expected   = Nothing
-    let actual     = validCellMatrix cellMatrix
-    assertEqual "CellMatrix is invalid when rows have different length" actual Nothing)
-
   testCellMatrixIsValidWhenRowsHaveSameLength = TestCase (do
     cellMatrixes <- getCellMatrixFixture
     let cellMatrix = cellMatrixes !! 0
@@ -43,8 +35,7 @@ module HaskBan.Test.ParserTest where
   getSokoMapFixture    = (head . runHaskBanParser) `liftM` fixture "SokoMapCreationFixture.txt" 
   getCellMatrixFixture = runHaskBanParser `liftM` fixture "ValidCellMatrixFixture.txt"
  
-  haskBanParserTestSuite = TestList [testCellMatrixIsInvalidWhenRowsHaveDifferentLength,
-                                     testCellMatrixIsValidWhenRowsHaveSameLength,
+  haskBanParserTestSuite = TestList [testCellMatrixIsValidWhenRowsHaveSameLength,
                                      testSokoMapCreationKeepsBoundaries,
                                      testSokoMapCreationHasPlayer]
 

@@ -106,10 +106,11 @@ module HaskBan.Monad where
   -- movePlayer :: Translation -> SokobanMonad ()
   movePlayer :: (MonadState SokobanInfo) m => Translation -> m Bool
   movePlayer trans = do
+    incrNumberOfSteps
     sm   <- getMap
     ppos <- getPlayerPosition
-    let ppos' = trans ppos
-    when (canMoveTo sm ppos' trans) $ do
+    when (canMoveTo sm ppos trans) $ do
+      let ppos' = trans ppos
       when (isBox ppos' sm) $ do
         moveBox ppos' trans
       -- we have updated the SokobanInfo
