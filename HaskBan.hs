@@ -23,8 +23,6 @@ module HaskBan (main) where
   main :: SokobanMonad ()
   main = do
     window <- liftIO setupHaskBanGUI
-    liftIO $ showMoves window 0
-    liftIO refresh
     loopUntil (readKeyAndPrint window)
     liftIO $ endWin
 
@@ -42,16 +40,10 @@ module HaskBan (main) where
         liftIO endWin
         return True
       else do
-        incrNumberOfSteps
-        steps <- getNumberOfSteps
-        liftIO $ showMoves window steps
         isFinished <- keyPressed key
         when isFinished (liftIO (wclear window >> printYouWonScreen window))
         liftIO $ refresh
         return isFinished
-
-  showMoves :: Window -> Int -> IO ()
-  showMoves w s = mvWAddStr w 3 30 ("Number of key-presses: " ++ show s)
 
   -- keyPressed :: (MonadState SokobanInfo) m => Key -> m ()
   keyPressed :: Key -> SokobanMonad Bool
@@ -74,7 +66,9 @@ module HaskBan (main) where
   displaySokobanMap :: Window -> SokobanMonad ()
   displaySokobanMap window = do
     sokobanMap <- getMap
+    steps <- getNumberOfSteps
     liftIO $ do
       let sokoMapStr = showSokoMap sokobanMap
       mvWAddStr window 2 0 sokoMapStr 
+      mvWAddStr window 3 30 ("Number of key-presses: " ++ show steps)
       refresh
