@@ -97,19 +97,11 @@ module HaskBan.Monad where
   movePlayer trans = do
     sm   <- getMap
     ppos <- getPlayerPosition
-    -- liftIO $ putStrLn "Hey Joe Joe Joe" 
-    -- liftIO $ putStrLn (show ppos)
-    --liftIO $ mvWAddStr stdScr 20 0 (show ppos)
-    --liftIO $ refresh
     let ppos' = trans ppos
-    -- liftIO $ putStrLn (show ppos')
     when (canMoveTo sm ppos' trans) $ do
-      incrNumberOfSteps
-      -- liftIO $ putStrLn "Hey Joe Joe Joe" 
       when (isBox ppos' sm) $ do
         moveBox ppos' trans
       -- we have updated the SokobanInfo
       updateMap (swapCellType ppos ppos')
       updatePlayerPosition trans
       
-
