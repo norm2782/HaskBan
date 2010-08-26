@@ -36,7 +36,7 @@ module HaskBan.Test.ParserTest where
     let sokoMap = cellMatrixToSokoMap cellMatrix
     -- (4, 7) should be the player
     case M.lookup (4, 7) sokoMap of
-      (Path Player) -> assertBool "The player is on the right position" True
+      Just (Path Player) -> assertBool "The player is on the right position" True
       x -> putStrLn "" >> putStrLn (show x) >> putStrLn "" >> assertBool "Player not Matching" False
     )
     

@@ -13,6 +13,7 @@ module HaskBan (main) where
   import HaskBan.Printer 
 
   -- others
+  import Data.List (sort)
   import Control.Monad (mapM_, liftM, forever)
   import Control.Monad.State
   import qualified Data.ByteString as BS
@@ -24,33 +25,39 @@ module HaskBan (main) where
     window <- liftIO setupHaskBanGUI
     liftIO $ showMoves window 0
     liftIO refresh
-    forever (readKeyAndPrint window)
+    loopUntil (readKeyAndPrint window)
+    liftIO $ endWin
 
-  readKeyAndPrint :: Window -> SokobanMonad ()
+  loopUntil :: (Monad m) => m Bool -> m ()
+  loopUntil action = do
+    shouldFinish <- action
+    when (not shouldFinish) (loopUntil action)
+
+  readKeyAndPrint :: Window -> SokobanMonad Bool
   readKeyAndPrint window = do
     displaySokobanMap window
     key <- liftIO getCh
     if shouldTerminate key
-      then liftIO endWin
+      then do
+        liftIO endWin
+        return True
       else do
-        keyPressed key
         incrNumberOfSteps
-        liftIO $ mvWAddStr window 20 0 (show key)
         steps <- getNumberOfSteps
         liftIO $ showMoves window steps
+        isFinished <- keyPressed key
+        when isFinished (liftIO (wclear window >> printYouWonScreen window))
         liftIO $ refresh
-        -- sokobanInfo <- get
-        -- liftIO $ mvWAddStr window 30 0 (show sokobanInfo)
+        return isFinished
 
   showMoves :: Window -> Int -> IO ()
   showMoves w s = mvWAddStr w 3 30 ("Number of key-presses: " ++ show s)
 
   -- keyPressed :: (MonadState SokobanInfo) m => Key -> m ()
-  keyPressed :: Key -> SokobanMonad ()
+  keyPressed :: Key -> SokobanMonad Bool
   keyPressed k = do 
     let t = getTranslation k
     movePlayer t
-    return ()
   
   getTranslation :: Key -> Translation
   getTranslation key | key == KeyUp    || key == (KeyChar 'k') = translateUp
@@ -61,6 +68,7 @@ module HaskBan (main) where
 
   shouldTerminate :: Key -> Bool
   shouldTerminate (KeyChar '\ESC') = True
+  shouldTerminate (KeyChar 'q')    = True 
   shouldTerminate _                = False 
 
   displaySokobanMap :: Window -> SokobanMonad ()

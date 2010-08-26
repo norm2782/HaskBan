@@ -20,7 +20,6 @@ module HaskBan.Test.LogicTest where
 
   testIsPathWorks = TestCase (do
     sokoMap <- getSokoMap
-    putStrLn (show sokoMap)
     let worksOnPath = isPath (3, 5) sokoMap
     let failsOnWall = isPath (3, 8) sokoMap
     let failsOnBox  = isPath (3, 6) sokoMap
