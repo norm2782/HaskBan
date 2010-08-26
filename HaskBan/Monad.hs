@@ -110,7 +110,6 @@ module HaskBan.Monad where
     ppos <- getPlayerPosition
     let ppos' = trans ppos
     when (canMoveTo sm ppos' trans) $ do
-      incrNumberOfSteps
       when (isBox ppos' sm) $ do
         moveBox ppos' trans
       -- we have updated the SokobanInfo
@@ -118,4 +117,3 @@ module HaskBan.Monad where
       updatePlayerPosition trans
     isGameFinished
       
-
