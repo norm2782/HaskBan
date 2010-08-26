@@ -23,8 +23,8 @@ module HaskBan (main) where
   main :: SokobanMonad ()
   main = do
     window <- liftIO setupHaskBanGUI
+    liftIO $ showMoves window 0
     liftIO refresh
-    liftIO $ showMoves 0
     loopUntil (readKeyAndPrint window)
     liftIO $ endWin
 
@@ -42,19 +42,16 @@ module HaskBan (main) where
         liftIO endWin
         return True
       else do
+        incrNumberOfSteps
+        steps <- getNumberOfSteps
+        liftIO $ showMoves window steps
         isFinished <- keyPressed key
-        --bs <- sort `liftM` getBoxesPositions
-        --ts <- sort `liftM` getTargetPositions
-        --liftIO $ mvWAddStr window 19 0 (show $ length bs)
-        --liftIO $ mvWAddStr window 20 0 (show bs)
-        --liftIO $ mvWAddStr window 21 0 (show $ length ts)
-        --liftIO $ mvWAddStr window 22 0 (show ts)
         when isFinished (liftIO (wclear window >> printYouWonScreen window))
         liftIO $ refresh
         return isFinished
 
-  showMoves :: Int -> IO ()
-  showMoves s = mvWAddStr stdScr 3 30 ("Number of moves: " ++ show s)
+  showMoves :: Window -> Int -> IO ()
+  showMoves w s = mvWAddStr w 3 30 ("Number of key-presses: " ++ show s)
 
   -- keyPressed :: (MonadState SokobanInfo) m => Key -> m ()
   keyPressed :: Key -> SokobanMonad Bool
@@ -67,7 +64,7 @@ module HaskBan (main) where
                      | key == KeyDown  || key == (KeyChar 'j') = translateDown
                      | key == KeyLeft  || key == (KeyChar 'h') = translateLeft
                      | key == KeyRight || key == (KeyChar 'l') = translateRight
-                     | otherwise                               = (\(x, y) -> (x, y))
+                     | otherwise                               = id 
 
   shouldTerminate :: Key -> Bool
   shouldTerminate (KeyChar '\ESC') = True
