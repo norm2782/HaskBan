@@ -110,11 +110,7 @@ module HaskBan.Monad where
     ppos <- getPlayerPosition
     let ppos' = trans ppos
     when (canMoveTo sm ppos' trans) $ do
-<<<<<<< HEAD
-=======
       incrNumberOfSteps
-      -- liftIO $ putStrLn "Hey Joe Joe Joe" 
->>>>>>> 1d1943111d993e95612b3a76d0e5b17591de7e28
       when (isBox ppos' sm) $ do
         moveBox ppos' trans
       -- we have updated the SokobanInfo
